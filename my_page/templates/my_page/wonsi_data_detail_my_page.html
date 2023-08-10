@@ -1,0 +1,140 @@
+{% extends "base2.html" %}
+{% load static %}
+
+
+{% block head_contents %}
+<style>
+
+.table-container {
+   text-align: center;
+   margin: 30px auto;
+   width: 1000px;
+}
+
+.upload_img {
+   width: 500px;
+     height: 500px;
+     border-style: solid;
+   background-color: white;
+   margin: 10px 20px 20px 480px;
+
+}
+.upload_img img {
+   width: 100%;
+   height:100%;
+   object-fit: cover;
+}
+
+.data_list {
+   text-align : center;
+}
+.result {
+   border: 1px solid #999;
+   border-radius: 10px;
+   padding: 30px 30px 200px 30px;
+
+}
+.refuse {
+   border: 1px solid #999;
+   border-radius: 10px;
+   border-weight: bold;
+}
+</style>
+
+    <meta charset="UTF-8">
+{% endblock head_contents %}
+
+{% block explain_contents %}
+   <div class="table-container">
+      <table class="table table-bordered table-striped my-table">
+         <thead>
+         <tr>
+            <th>인삼 ID</th>
+            <th>년근</th>
+            <th>등급</th>
+            <th>품종</th>
+            <th>업로더</th>
+            <th>상태</th>
+         </tr>
+         </thead>
+         <tbody>
+         <tr>
+            <td>{{ wonsi_data.ginseng_id.ginseng_id }}</td>
+            <td>
+               {% if wonsi_data.age.age == four %}
+               4년근
+               {% elif wonsi_data.age.age == five %}
+               5년근
+               {% elif wonsi_data.age.age == six %}
+               6년근
+               {% endif %}
+            </td>
+            <td>
+               {% if wonsi_data.grade == large %}
+               대
+               {% elif wonsi_data.grade == medium %}
+               중
+               {% elif wonsi_data_grade == small %}
+               소
+               {% endif %}
+            </td>
+            <td>
+               {% if wonsi_data.variety == 'NULL' %}
+               알 수 없음
+               {% else %}
+               {{ wonsi_data.variety }}
+               {% endif %}
+            </td>
+            <td>{{ wonsi_data.username.username }}</td>
+            <td>
+               {% if wonsi_board.state == 0 %}
+               <p style="color: #47C83E; font-weight: bold; margin-bottom:0px;">처리 중
+               {% elif wonsi_board.state == 1 %}
+               <p style="color: #0054FF; margin-bottom:0px; font-weight: bold;">승인 완료
+               {% elif wonsi_board.state == 2 %}
+               <p style="color: #FF0000; margin-bottom:0px;  font-weight: bold; ">반려</p>
+               {% endif %}
+            </td>
+         </tr>
+         </tbody>
+      </table>
+   </div>
+         <div class = "data_list" style ="text-align:center; display: flex;">
+            <div class="image-border">
+               <div class="upload_img">
+                  <img src="{{ image_url }}" alt="다운로드">
+               </div>
+            </div>
+            <div class="all-text" style ="margin: 0px 0px 0px 40px;">
+               <div class="panel-heading">
+                  <h5 class="panel-title" style="margin:0px 0px 20px 0px; ">
+                     <a style="font-weight: bold;"data-toggle="collapse" data-parent="#accordion">내가 업로드한 인삼 리스트<span style="float: right;"></span></a>
+                  </h5>
+               </div>
+               <div class="result">
+               <h6 style="font-weight: bold;">▶현재 이미지 아이디:{{wonsi_board.image_id.image_id}}</h6>
+               {% for data in wonsi_objects|slice:":10" %}
+                  <div style="margin-top: 8px;">
+                     <a href="{% url 'my_page:wonsi_data_detail_my_page' data.wonsi_num %}">
+                        {{ data.title.title }}
+                     </a>
+                  </div>
+                  {% empty %}
+               {% endfor %}
+               {% if wonsi_board.state == 2 %}
+               </div>
+                  <div class="refuse" style="display: flex; margin-top: 10px;">
+                     <p style="font-size: 18px; margin: 10px 10px 10px 10px; color: #FF0000; font-weight: bold;">반려이유:</p>
+                     {% for data in wonsi_comments %}
+                     <div style="font-size: 18px; margin: 10px 10px 10px 0px; font-weight: bold">
+                        <a>{{ data.text }}</a>
+                     </div>
+                  </div>
+            </div>
+
+               {% endfor %}
+            {% endif %}
+         </div>
+
+<script src="{% static 'js/admin.js' %}"></script>
+{% endblock explain_contents %}

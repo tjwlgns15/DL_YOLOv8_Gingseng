@@ -1,0 +1,86 @@
+{% extends "admin_base.html" %}
+{% block head_contents %}
+{% load static %}
+<link href="{% static 'css/adminpage.css' %}" type="text/css" rel="stylesheet">
+<meta charset="UTF-8">
+{% endblock head_contents %}
+
+{% block explain_contents %}
+<style>
+    h3 {
+        font-size: 30px;
+        font-weight: 600;
+        margin: 40px 30px 10px 30px;
+        color: #FFFFFF;
+    }
+
+     form {
+       text-align: center;
+    }
+
+
+    .card-write{
+        padding: 20px;
+    }
+    .card-write input, textarea{
+        margin-left: 10px;
+        padding: 10px;
+        border: 1px solid #999;
+        border-radius:10px;
+        box-shadow: 3px 3px 1-px #e6e6e6;
+    }
+    .card-edit .title {
+        color: #FFFFFF;
+    }
+    .card-write .title input {
+        margin-top: 20px;
+        margin-bottom : 20px;
+        width: 50.5%;
+    }
+    .card-edit .content {
+        color: #FFFFFF;
+    }
+    .card-write .content textarea {
+         min-width : 50.5%;
+         max-width : 50.5%;
+         min-height: 300px;
+         max-height: 00px;
+         box-shadow: inset 3px 3px 10px #e6e6e6;
+         vertical-align: top;
+    }
+    .button {
+        text-align: right;
+        margin: 30px 150px 10px 0px;
+    }
+
+    .button button {
+        margin-right : 5px;
+    }
+
+</style>
+
+<form action="{% url 'adminpage:notice_update' pk=article.pk %}">
+    <div>
+        <div class="card-write">
+            <H3>공지사항</H3>
+            <div class="card-edit">
+                <div class="title">
+                    제목 <input type="text" name="title" value="{{article.title}}">
+                </div>
+                <div class="content">
+                    내용 <textarea name="text">{{article.text}}</textarea>
+                </div>
+            </div>
+            <div class="button">
+                <input type="hidden" value="{{article.admin_id}}">
+                <button type="submit" name=create class="btn btn-warning"><a
+                        style="color: black; text-decoration: none;">수정</a></button>
+                <button type="submit" name=delete class="btn btn-warning">
+                    <a href="{% url 'adminpage:notice_index'%}" style="color: black; text-decoration: none; ">back</a>
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+
+{% endblock explain_contents %}

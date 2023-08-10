@@ -1,0 +1,250 @@
+{% extends "admin_base.html" %}
+{% block head_contents %}
+{% load static %}
+<link href="{% static 'css/adminpage.css' %}" type="text/css" rel="stylesheet">
+<meta charset="UTF-8">
+{% endblock head_contents %}
+
+{% block explain_contents %}
+<style>
+    .content {
+        text-align :center;
+        margin: 30px;
+    }
+
+    h3 {
+    font-size: 30px;
+    font-weight: 600;
+    margin: 40px 30px 0px 100px;
+    text-align: left;
+    color : #FFFFFF;
+    }
+
+    h4 {
+        font-size: 25px;
+        font-weight: 600;
+        margin: 0px 30px 0px 30px;
+        text-align: center;
+        color : #FFFFFF;
+    }
+    .content {
+        text-align : center;
+        padding: 5px;
+    }
+    .content .title{
+        margin-top: 10px;
+        margin-bottom: 30px;
+    }
+    .content .myinfo {
+        border-top : 1px solid #999;
+        border-bottom: 1px solid #999;
+        margin: auto;
+        width: 400px;
+        padding-top: 10px;
+        padding-bottom: 0px;
+    }
+    .content .myinfo dl {
+        display: inline-block;
+    }
+    .content .myinfo dl dt, dd {
+        display: inline-block;
+        font-size: 14px;
+    }
+
+    .content .myinfo dl dt {
+        margin-left: 5px;
+        color:#999;
+    }
+    .content .myinfo dl dd {
+        margin-right: 10px;
+        margin-left: 5px;
+    }
+    .content .myinfo dd {
+        margin-right: 10px;
+        margin-left: 5px;
+        color : #FFFFFF;
+    }
+    .cont {
+        border-radius: 10px;
+        margin: 30px auto; /* 수평 가운데 정렬을 위해 margin을 auto로 설정 */
+        padding-bottom: 30px;
+        text-align: center;
+        border: 1px solid #999;
+        width: 50.5%;
+        max-width: 50.5%; /* 요소의 최대 너비를 100%로 설정 */
+    }
+
+    .cont p {
+        margin-top: 30px;
+        padding: 10px 20px 10px 20px;
+        text-align: center;
+        color : #FFFFFF;
+    }
+
+    .button {
+        text-align: right;
+        margin : 0px 200px 10px 0px;
+    }
+
+    .button button {
+        text-align: right;
+    }
+
+   .answer {
+    display: flex;
+    flex-direction: column;
+    }
+
+    .answer input {
+        width: 54%;
+        max-width: 54%;
+        height: 80.5%;
+        padding: 10px;
+        border: 1px solid #999;
+        border-radius: 10px;
+        margin: 10px auto;
+
+    }
+
+    .answer_button {
+        text-align: right;
+        margin : 0px 380px 0px 0px;
+
+    }
+
+
+    .button_back {
+        text-align: right;
+        margin: 0px 150px 0px 0px;
+    }
+
+
+    .button_back button{
+        font-size: 11px;
+    }
+
+    .answer_button button {
+        text-align: right;
+        font-size: 5px;
+    }
+
+    .comment-header {
+        margin-left: 380px;
+        margin-right: 380px;
+        border-top: 1px solid #999;
+        padding-top: 5px;
+        padding-bottom: 0px;
+        margin-top: 20px;
+        font-weight: bold;
+    }
+
+   .answer_text {
+        margin: 10px 380px 25px 380px;
+        border-top: 1px solid #999;
+    }
+
+    .answer-text du {
+        margin : 5px 0 0 0;
+        font-size: 5px;
+    }
+
+    .answer-text dd {
+        font-size: 5px;
+    }
+
+    .answer-text dl {
+        margin-bottom : 0px;
+    }
+
+    .answer_delete {
+        margin : 0px 380px 0px 0px;
+        text-align: right;
+    }
+
+    .answer_delete button {
+        margin: 0 0 5px 0 ;
+        font-size: 5px;
+    }
+
+    .comment-header {
+        color : #FFFFFF;
+    }
+
+
+
+
+</style>
+
+<h3> 질문게시판 </h3>
+<div class="total">
+    <div class="content">
+        <div class="button_back">
+            <button type="submit" name=delete class="btn btn-warning"><a
+                    href="{% url 'adminpage:questionboard_index' %}" style="color: black; text-decoration: none; ">목록으로
+                돌아가기</a></button>
+        </div>
+        <div class="title">
+            <h4>제목 : {{article.title}} </h4>
+        </div>
+        <div class="myinfo">
+            <dl>
+                <dt>작성자</dt>
+                <dd> {{article.username.username}}</dd>
+            </dl>
+            <dl>
+                <dt>작성일자</dt>
+                <dd> {{article.create_date}}</dd>
+            </dl>
+            <dl>
+                <dt>조회수</dt>
+                <dd> {{article.count}}</dd>
+            </dl>
+        </div>
+        <div class="cont">
+            <br>
+            <p>{{article.text}} </p>
+        </div>
+    </div>
+</div>
+<div class="answer_input">
+    <div class="comment-header">댓글</div>
+    {% for answer in article.answer_set.all %}
+    <div class="answer_text">
+        <du style="color : #FFFFFF;">[{{ answer.admin_id.admin_id }}]</du>
+        <dt style="color : #FFFFFF;">{{ answer.text }}</dt>
+        <dd style="color : #FFFFFF;">{{ answer.create_date }}</dd>
+    </div>
+    <form method="POST">
+        {% if user.authority == 4 or user.authority == 5 %}
+        <div class="answer_delete">
+            <input type="hidden" name="answer_id" value="{{ answer.id }}">
+            {% csrf_token %}
+            <button type="submit" name=delete class="btn btn-dark">삭제</button>
+        </div>
+        {% endif %}
+    </form>
+    {% endfor %}
+</div>
+
+<form method="POST" action="{% url 'adminpage:questionboard_detail' article.question_num %}">
+    {% csrf_token %}
+    {% if user.authority == 4 or user.authority == 5 %}
+    <div class="answer">
+        <input type="hidden" name="question_num" value="{{ article.question_num }}">
+        <input type="text" placeholder="댓글을 입력하세요" name="text">
+    </div>
+    <div class="answer_button">
+        <button type="submit" name=create class="btn btn-dark">입력</button>
+    </div>
+    {% endif %}
+</form>
+
+<div class="button">
+    <input type="hidden" value="{{article.admin_id}}">
+    <button type="submit" name=delete class="btn btn-warning"><a
+            href="{% url 'adminpage:questionboard_delete' article.question_num %}"
+            style="color: black; text-decoration: none; ">삭제</a></button>
+</div>
+{% endblock explain_contents %}
+
+

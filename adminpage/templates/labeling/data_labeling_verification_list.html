@@ -1,0 +1,101 @@
+{% extends "admin_base.html" %}
+{% load static %}
+
+{% block head_contents %}
+<link href="{% static 'css/adminpage.css' %}" type="text/css" rel="stylesheet">
+<meta charset="UTF-8">
+{% endblock head_contents %}
+
+{% block explain_contents %}
+<html>
+<head>
+    <!-- head contents here -->
+</head>
+<body>
+<div class="projects mb-4">
+    <div class="projects-inner">
+        <header class="projects-header">
+            <form class="form" action="{% url 'adminpage:update_data_labeling_verification' %}" method="POST">
+                <div class="title">라벨링 검증</div>
+                {% csrf_token %}
+                <div class="select-box" style="float:right">
+                    <select class="action-box" name="state">
+                        <option value="all">전체</option>
+                        <option value="processing">처리 중</option>
+                        <option value="rejected">반려</option>
+                        <option value="approved">승인</option>
+                    </select>
+                    <button type="submit" name="action" value="filter">설정</button>
+                </div>
+            </form>
+        </header>
+        <table class="projects-table">
+            <thead>
+            <tr>
+                <th>게시글 번호</th>
+                <th>제목</th>
+                <th>작성자</th>
+                <th>작성일</th>
+                <th>현황</th>
+                <th>기능</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for certification in object_list %}
+            <tr>
+                <td><a href="{% url 'adminpage:labeling_detail' certification.board_num %}">{{certification.board_num}}</a></td>
+                <td><a href="{% url 'adminpage:labeling_detail' certification.board_num %}">{{ certification.title}}</a></td>
+                <td>{{ certification.work_num.username.username}}</td>
+                <td>{{ certification.create_date }}</td>
+                <td>
+                    {% if certification.state == 0 %}
+                    처리 중
+                    {% elif certification.state == 1 %}
+                    승인 완료
+                    {% elif certification.state == 2 %}
+                    반려
+                    {% endif %}
+                </td>
+                <td>
+                    {% if certification.state != 1 %}
+                    <form class="form" action="{% url 'adminpage:update_data_labeling_verification' %}" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="title" value="{{ certification.title }}">
+                        <button type="submit" name=approve class="btn btn-primary">승인</button>
+                        <button type="submit" name=reject class="btn btn-danger">반려</button>
+                        <button type="submit" name=delete class="btn btn-dark">삭제</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="pagination">
+    {% if page_obj.has_previous %}
+    <a href="?page=1">처음</a>
+    <a href="?page={{ page_obj.previous_page_number }}">이전</a>
+    {% endif %}
+
+    {% for num in page_obj.paginator.page_range %}
+    {% if page_obj.number == num %}
+    <span class="current-page">{{ num }}</span>
+    {% else %}
+    <a href="?page={{ num }}">{{ num }}</a>
+    {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}">다음</a>
+    <a href="?page={{ page_obj.paginator.num_pages }}">마지막</a>
+    {% endif %}
+</div>
+
+
+<script src="{% static 'js/admin.js' %}"></script>
+</body>
+</html>
+{% endblock explain_contents %}

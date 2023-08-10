@@ -1,0 +1,131 @@
+{% extends "admin_base.html" %}
+{% block head_contents %}
+{% load static %}
+<link href="{% static 'css/adminpage.css' %}" type="text/css" rel="stylesheet">
+<meta charset="UTF-8">
+{% endblock head_contents %}
+
+{% block explain_contents %}
+<style>
+    .content {
+        text-align :center;
+        margin: 30px;
+    }
+    h3 {
+        font-size: 30px;
+        font-weight: 600;
+        margin: 40px 30px 30px 100px;
+        text-align: left;
+        color : #FFFFFF;
+    }
+    h4 {
+        font-size: 25px;
+        font-weight: 600;
+        margin: 0px 30px 0px 30px;
+        text-align: center;
+        color : #FFFFFF;
+    }
+    .content {
+        text-align : center;
+        padding: 5px;
+    }
+    .content .title {
+        margin-top: 10px;
+        margin-bottom: 30px;
+    }
+    .content .myinfo {
+        border-top : 1px solid #999;
+        border-bottom: 1px solid #999;
+        margin: auto;
+        width: 400px;
+        padding-top: 10px;
+        padding-bottom: 0px;
+    }
+    .content .myinfo dl {
+        display: inline-block;
+    }
+    .content .myinfo dl dt, dd {
+        display: inline-block;
+        font-size: 14px;
+    }
+
+    .content .myinfo dl dt {
+        margin-left: 5px;
+        color:#999;
+    }
+    .content .myinfo dl dd {
+        margin-right: 10px;
+        margin-left: 5px;
+    }
+    .content .myinfo dd{
+        color:#FFFFFF;
+    }
+    .cont {
+        border-radius: 10px;
+        margin: 30px auto; /* 수평 가운데 정렬을 위해 margin을 auto로 설정 */
+        padding-bottom: 30px;
+        text-align: center;
+        border: 1px solid #999;
+        width: 50.5%;
+        max-width: 50.5%; /* 요소의 최대 너비를 100%로 설정 */
+    }
+    .cont p{
+        margin-top: 30px;
+        padding: 10px 20px 10px 20px;
+        text-align: center;
+        color : #FFFFFF;
+    }
+    .button {
+        text-align: right;
+        margin : 0px 100px 10px 0px;
+    }
+    .button button {
+        text-align: right;
+    }
+
+
+</style>
+
+<h3> 공지사항 </h3>
+<div class="total">
+    <div class="content">
+        <div class="title">
+            <h4>제목 : {{article.title}} </h4>
+        </div>
+        <div class="myinfo">
+            <dl>
+                <dt>작성자</dt>
+                <dd> {{article.admin_id.admin_id}}</dd>
+            </dl>
+            <dl>
+                <dt>작성일자</dt>
+                <dd> {{article.creat_date}}</dd>
+            </dl>
+            <dl>
+                <dt>조회수</dt>
+                <dd> {{article.count}}</dd>
+            </dl>
+        </div>
+        <div class="cont">
+            <br>
+            <p>{{article.text}} </p>
+        </div>
+    </div>
+    <div class="button">
+        <input type="hidden" value="{{article.admin_id}}">
+        {% csrf_token %}
+        <button type="submit" name=revise class="btn btn-warning"><a
+                href="{% url 'adminpage:notice_edit' article.Notice_num %}"
+                style="color: black; text-decoration: none; ">수정</a></button>
+        <input type="hidden" value="{{article.admin_id}}">
+        {% csrf_token %}
+        <button type="submit" name=delete class="btn btn-warning"><a
+                href="{% url 'adminpage:notice_delete' article.Notice_num %}"
+                style="color: black; text-decoration: none; ">삭제</a></button>
+        <button type="submit" name=delete class="btn btn-warning"><a href="{% url 'adminpage:notice_index'%}"
+                                                                     style="color: black; text-decoration: none; ">back</a>
+        </button>
+    </div>
+
+</div>
+{% endblock explain_contents %}

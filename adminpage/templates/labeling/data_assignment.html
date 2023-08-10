@@ -1,0 +1,76 @@
+{% extends "admin_base.html" %}
+{% load static %}
+
+{% block head_contents %}
+<link href="{% static 'css/adminpage.css' %}" type="text/css" rel="stylesheet">
+<style>
+        /* 스타일 추가 */
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: cornflowerblue;
+            font-weight: bold;
+
+        }
+
+</style>
+<meta charset="UTF-8">
+{% endblock head_contents %}
+
+<!-- 기존 코드 생략 -->
+
+{% block explain_contents %}
+<div style="color: #FFFFFF">
+    <h1>데이터 할당</h1>
+
+    <br>
+    <h3>[이미지 분배 현황]</h3>
+    <table style="text-align: center">
+        <tr>
+            <th>작업자</th>
+            <th>할당된 이미지 ID 개수</th>
+        </tr>
+        {% for username, count in username_count_dict.items %}
+        <tr>
+            <td>{{ username }}</td>
+            <td>{{ count }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <br><br>
+    <h3>[이미지 분배]</h3>
+    <br>
+    <form action="{% url 'adminpage:assign_data' %}" method="post">
+        {% csrf_token %}
+        <h4>1. 작업자 선택</h4>
+        <label for="username">작업자 ID:</label>
+        <select id="username" name="username">
+            {% for username in usernames %}
+            <option value="{{ username }}">{{ username }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+        <h4>2. 작업자에게 할당되지 않은 이미지 ID 총 개수: {{ unassigned_image_ids_count }}</h4>
+        <label for="image_id">이미지 ID:</label>
+        <select id="image_id" name="image_id">
+            {% for image_id in unassigned_image_ids %}
+            <option value="{{ image_id }}">{{ image_id }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+        <input type="submit" value="이미지 분배하기">
+    </form>
+</div>
+
+{% endblock explain_contents %}

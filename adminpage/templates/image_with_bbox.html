@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image with Bounding Box</title>
+</head>
+<body>
+<h1 style="text-align: center">라벨링 검증 page</h1>
+
+{% if image_url %}
+<img id="image" src="{{ image_url }}" alt="Image with Bounding Box" width="600" height="750" style="display: none;">
+<canvas id="bboxCanvas" width="600" height="750"></canvas>
+{% else %}
+<p>Image not found.</p>
+{% endif %}
+
+{% if bbox_coords %}
+<h2>Bounding Box Coordinates:</h2>
+<ul>
+    {% for coords in bbox_coords %}
+    <li>{{ coords }}</li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No bounding box coordinates found.</p>
+{% endif %}
+
+<script>
+    var image = document.getElementById('image');
+    var bboxCanvas = document.getElementById('bboxCanvas');
+    var ctx = bboxCanvas.getContext('2d');
+
+    var imageObj = new Image();
+    imageObj.onload = function() {
+        ctx.drawImage(imageObj, 0, 0, 600, 750);
+
+        var colors = ['red', 'blue', 'green', 'yellow'];
+        {% for coords in bbox_coords %}
+            var bboxCoords = {{ coords }};
+            var xMin = bboxCoords[0];
+            var yMin = bboxCoords[1];
+            var xMax = bboxCoords[2];
+            var yMax = bboxCoords[3];
+
+            var colorIndex = {{ forloop.counter0 }} % colors.length;
+            ctx.strokeStyle = colors[colorIndex];
+            ctx.lineWidth = 2;
+            ctx.strokeRect(xMin, yMin, xMax - xMin, yMax - yMin);
+        {% endfor %}
+    };
+    imageObj.src = image.src;
+
+
+</script>
+
+</body>
+</html>

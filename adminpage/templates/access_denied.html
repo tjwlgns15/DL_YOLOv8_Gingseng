@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+{% extends "base2.html" %}
+{% load static %}
+
+{% block explain_contents %}
+<head>
+    <title>Access Denied</title>
+</head>
+<body>
+<style>
+    /* 모달 배경 스타일 */
+    .modal-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* 모달 창 스타일 */
+    .modal-content {
+        width:500px;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    .modal-content button{
+        width:100px;
+        margin-left:175px;
+    }
+
+
+
+</style>
+
+<div class="modal-background" id="modalBackground">
+    <div class="modal-content">
+        <h2>Access Denied</h2>
+        <p>접근할 수 없습니다. 해당 페이지에 접근할 권한이 없습니다.
+        <p>
+        <p>관리자에게 문의하세요.</p>
+        <button class="btn btn-primary" onclick="redirectToHome()">확인</button>
+    </div>
+</div>
+
+<script>
+    // 모달 대화 상자를 표시하는 함수
+    function showModal() {
+        var modal = document.getElementById("modalBackground");
+        modal.style.display = "flex";
+    }
+
+    // 모달 대화 상자를 닫고 홈으로 리디렉트하는 함수
+    function redirectToHome() {
+        var modal = document.getElementById("modalBackground");
+        modal.style.display = "none";
+        window.location.href = '/home'; // 홈으로 리디렉트
+    }
+
+    // 페이지 로드 후 모달을 표시합니다.
+    window.onload = function () {
+        showModal();
+    };
+
+
+
+</script>
+</body>
+{% endblock explain_contents %}

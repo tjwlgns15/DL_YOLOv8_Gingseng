@@ -1,0 +1,65 @@
+{% extends "base2.html" %}
+{% load static %}
+{% block explain_contents %}
+<style>
+
+h3 {
+    font-size: 30px;
+    font-weight: 600;
+    margin: 40px 30px 0px 30px;
+}
+
+ form {
+   text-align: center;
+}
+
+
+.card-write{
+    padding: 20px;
+}
+.card-write input, textarea{
+    margin-left: 10px;
+    padding: 10px;
+    border: 1px solid #999;
+    border-radius:10px;
+    box-shadow: 3px 3px 1-px #e6e6e6;
+}
+.card-write .title input {
+    margin-top: 20px;
+    margin-bottom : 20px;
+    width: 50.5%;
+}
+.card-write .content textarea {
+     min-width : 50.5%;
+     max-width : 50.5%;
+     min-height: 300px;
+     max-height: 00px;
+     box-shadow: inset 3px 3px 10px #e6e6e6;
+     vertical-align: top;
+}
+.button {
+    text-align: right;
+}
+
+.button button {
+  margin-right : 120px;
+}
+</style>
+<form action= "{% url 'questionboard:create' %}" >
+    <div>
+    <h3> 질문게시판 </h3>
+        <div class = "card-write">
+            <div class="title">
+                제목 <input placeholder="제목을 입력하세요" type="text" name="title">
+            </div>
+            <div class="content">
+                내용 <textarea placeholder="내용을 입력하세요" name="text"></textarea>
+            </div>
+        </div>
+        <div class ="button">
+            <input type="hidden" value="{{article.question_num}}">
+            <button type="submit" name = create class="btn btn-warning"><a href="/home/questionboard" style="color: black; text-decoration: none;">작성</a></button>
+        </div>
+    </div>
+</form>
+{% endblock explain_contents %}

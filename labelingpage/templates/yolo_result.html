@@ -1,0 +1,54 @@
+{% extends "base2.html" %}
+{% load static %}
+
+{% block head_contents %}
+    <title>Yolov5 Prediction</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+{% endblock head_contents %}
+
+{% block explain_contents %}
+
+    <div style="text-align: center">
+    <h1>Yolov5 Prediction</h1>
+    <input type="file" id="image-upload" name="image" accept="image/*">
+    <button id="predict-button">Predict</button>
+    </div>
+
+    <script>
+    $(document).ready(function() {
+        // CSRF 토큰 가져오기
+        var csrftoken = Cookies.get('csrftoken');
+
+        $("#predict-button").click(function() {
+            var fileInput = document.getElementById('image-upload');
+            var file = fileInput.files[0];
+            var formData = new FormData();
+            formData.append('image', file);
+
+            $.ajax({
+                url: '/yolov5_prediction/',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                beforeSend: function(xhr) {
+                    // AJAX 요청 헤더에 CSRF 토큰 설정
+                    xhr.setRequestHeader('X-CSRFToken', csrftoken);
+                },
+                success: function(response) {
+                    console.log(response);
+                    // 예측 결과 처리
+                    // ...
+                },
+                error: function(xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        });
+    });
+    </script>
+{% endblock explain_contents %}
+
+
+</body>
+</html>

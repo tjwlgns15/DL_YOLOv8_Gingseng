@@ -1,0 +1,280 @@
+{% extends "base2.html" %}
+{% load static %}
+
+{% block head_contents %}
+<link href="{% static 'css/mysite.css' %}" type="text/css" rel="stylesheet">
+<meta charset="UTF-8">
+{% endblock head_contents %}
+
+{% block explain_contents %}
+
+<!-- 아코디언 -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+<!-- INFO 테이블 -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+<style>
+@font-face {
+    font-family: 'NanumSquareNeo-Variable';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/NanumSquareNeo-Variable.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+.container {
+    display: flex;
+    flex-direction: column;
+    font-family: 'NanumSquareNeo-Variable', Arial, sans-serif;
+}
+
+.half {
+  flex-basis: 50%;
+}
+.item {
+  height: fit-content;
+  align-items: flex-end;
+}
+.table-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+}
+.table-container_personal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+}
+.my-table {
+  width: 400px; /* 테이블의 너비를 100%로 설정 */
+  margin: 15px 0px;
+}
+.my-table th, .my-table td {
+  text-align: center; /* 모든 테이블 셀 내의 글자를 가운데 정렬 */
+}
+
+</style>
+
+ <div class="greenContainer" style="margin: 10px 50px;">
+    <div>
+        <!-- <div class="grade">GOLD</div> -->
+        <div class="name" >My Page</div>
+    </div>
+
+</div>
+
+<div class="container">
+    <div class="half"> <!-- 위쪽 내용 -->
+        <div class="shippingStatusContainer">
+            <div class="title">
+                개인 정보 확인
+            </div>
+            <div class="item" style="display: flex; align-items: center;">
+
+                <div class="item-content1" style="margin: 0 30px">
+                    <div style="display: flex; justify-content: center; align-items: center;">
+                      <img src="/static/image/루피.png" alt="개인사진" height="200px" width="200px">
+                    </div>
+                    <div class="table-container_personal">
+                        <table class="table table-bordered table-striped my-table">
+                            <thead>
+                                <tr>
+                                    <th>이름</th>
+                                    <th>이메일</th>
+                                    <th>등급</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{{ user_info.name }}</td>
+                                    <td>{{ user_info.email }}</td>
+                                    <td>
+                                        {% if user_info.authority == 0 %}
+                                        일반
+                                        {% elif user_info.authority == 1 %}
+                                        Uploader
+                                        {% elif user_info.authority == 2 %}
+                                        Labeler
+                                        {% elif user_info.authority == 3 %}
+                                        Uploader / Labeler
+                                        {% elif user_info.authority == 4 %}
+                                        Manager
+                                        {% elif user_info.authority == 5 %}
+                                        administrator
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="item-content" style="margin: 0 30px">
+                    <div class="item-content" style="display: flex; justify-content: center; margin: 20px 0 20px 0;">
+                        <div style="margin: 0 35px; white-space: nowrap;">
+                            <div class="greennumber">{{ upload_posts_count }}</div>
+                            <div class="text">총 데이터<br>수집</div>
+                        </div>
+                        <div style="margin: 0 35px; white-space: nowrap;">
+                            <div class="greennumber">{{ real_wonsi_verification }}</div>
+                            <div class="text">승인<br>개수</div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="item-content" style="display: flex; justify-content: center; margin: 20px 0 20px 0;">
+                        <div style="margin: 0 35px; white-space: nowrap;">
+                            <div class="greennumber">{{ labeling_posts_count }}</div>
+                            <div class="text">총 라벨링<br>데이터</div>
+                        </div>
+                        <div style="margin: 0 35px; white-space: nowrap;">
+                            <div class="greennumber">{{ real_label_verification }}</div>
+                            <div class="text">승인<br>개수</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container" style="margin: 0 30px">
+                    <div>
+                        <h3 style="text-align: left; font-weight: bold;">남은 포인트<br>
+                            <span style="font-weight: normal;">{{ remaining_points }} P</span>
+                        </h3>
+                        <h3 style="text-align: left; font-weight: bold;">계좌 지급 예정 포인트<br>
+                            {% if waiting_sum == None %}
+                            <span style="font-weight: normal;"> 0 P </span>
+                            {% elif waiting_sum != None %}
+                            <span style="font-weight: normal;">{{ waiting_sum }} 원</span>
+                            {% endif %}
+                        </h3>
+                        <table class="table table-bordered table-striped my-table">
+                            <form id="payment-form" method="post" action="{% url 'my_page:add_payment' %}">
+                                {% csrf_token %}
+                                <input type="number" id="money-payments" name="money-payments" placeholder="요청 금액" required>
+                                <button type="submit" class="btn btn-primary">계좌 요청</button>
+                            </form>
+                        </table>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="half"> <!-- 아래쪽 내용 -->
+        <div class="wrap">
+            <div class="listContainer" style="margin: 20px; display: flex;">
+
+                <div class="panel panel-default" style="flex: 1; margin: 5px;">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">데이터 업로드<span style="float: right;">▽</span></a>
+                        </h4>
+                    </div>
+                        {% for data in wonsi_objects|slice:":5" %}
+                            <div>
+                                  <a href="{% url 'my_page:wonsi_data_detail_my_page' data.wonsi_num %}">{{ data.image_id.image_id }}</a>
+                                [{% if data.state == 0 %}
+                                   승인 대기 중
+                                   {% elif data.state == 1 %}
+                                   승인 완료
+                                   {% elif data.state == 2 %}
+                                   반려
+                                   {% endif %}]
+                            </div>
+                        {% empty %}
+                            <div>
+                                <div class="panel-body">수집한 데이터가 없습니다.</div>
+                            </div>
+                        {% endfor %}
+                     </div>
+                <div class="panel panel-default" style="flex: 1; margin: 5px;">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">데이터 라벨링<span style="float: right;">▽</span></a>
+                        </h4>
+                    </div>
+                    {% for data in label_c_objects|slice:":5" %}
+                            <div>
+                                <div class="panel-body">
+                                    <a href="{% url 'my_page:data_labeling_detail_my_page' data.board_num %}">{{ data.title }}</a>
+                                    [{% if data.state == 0 %}
+                                   승인 대기 중
+                                   {% elif data.state == 1 %}
+                                   승인 완료
+                                   {% elif data.state == 2 %}
+                                   반려
+                                   {% endif %}]
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div>
+                                <div class="panel-body">수집한 데이터가 없습니다.</div>
+                            </div>
+                        {% endfor %}
+                </div>
+                <div class="panel panel-default" style="flex: 1; margin: 5px;">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse4">질의 응답<span style="float: right;">▽</span></a>
+                        </h4>
+                    </div>
+                   {% for data in question_objects|slice:":5" %}
+                             <div>
+                                 최근 질문작성한 질문:
+                                  <a href="{% url 'questionboard:detail' data.question_num %}">
+                                        {{ data.title.title }}
+                                  </a>
+                            </div>
+                        {% empty %}
+                            <div>
+                                <div class="panel-body">작성한 질문이 없습니다.</div>
+                            </div>
+                        {% endfor %}
+                </div>
+                <div class="panel panel-default" style="flex: 1; margin: 5px;">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse4">반려 사유<span style="float: right;">▽</span></a>
+                        </h4>
+                    </div>
+                    {% for data in wonsi_comments_objects|slice:":5" %}
+                             <div>
+                                  <a href="#">
+                                        {{ data.text }}
+                                  </a>
+                                   [업로드 데이터]
+                            </div>
+                        {% empty %}
+                            <div>
+                                <div class="panel-body">반려된 원시데이터가 없습니다.</div>
+                            </div>
+                        {% endfor %}
+                    {% for data in label_comments_objects|slice:":5" %}
+                             <div>
+                                  <a href="#">
+                                        {{ data.text }}
+                                  </a>
+                                   [라벨링 데이터]
+                            </div>
+                        {% empty %}
+                            <div>
+                                <div class="panel-body">반려된 라벨링데이터가 없습니다.</div>
+                            </div>
+                        {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock explain_contents %}

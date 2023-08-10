@@ -1,0 +1,57 @@
+{% extends "admin_base.html" %}
+{% load static %}
+
+{% block head_contents %}
+   <link href="{% static 'css/adminpage.css' %}" type="text/css" rel="stylesheet">
+    <meta charset="UTF-8">
+{% endblock head_contents %}
+
+{% block explain_contents %}
+<html>
+<head>
+	<!-- head contents here -->
+</head>
+<body>
+<div class="projects mb-4">
+	<div class="projects-inner">
+		<header class="projects-header">
+			<div class="title">포인트 정산</div>
+			<i class="zmdi zmdi-download"></i>
+		</header>
+		<table class="projects-table">
+			<thead>
+			<tr>
+				<th>정산 번호</th>
+				<th>아이디</th>
+				<th>지급액</th>
+				<th>요청일자</th>
+				<th>지급</th>
+			</tr>
+			</thead>
+			<tbody>
+			{% for settlement in Point_boards %}
+			<tr>
+				<td>{{ settlement.money_num}}</td>
+                <td>{{ settlement.user_name.username}}</td>
+				<td>{{ settlement.money_Payments}}</td>
+                <td>{{ settlement.money_date}}</td>
+				<td>
+                {% if settlement.money_a == 0 %}
+					<form class="form" action="{% url 'adminpage:update_data_Point_settlement' %}" method="POST">
+						{% csrf_token %}
+						<input type="hidden" name="money_num" value="{{ settlement.money_num }}">
+						<button type="submit" name = approve class="btn btn-primary">승인</button>
+						<button type="submit" name = reject class="btn btn-danger">반려</button>
+					</form>
+                {% endif %}
+				</td>
+			</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+<script src="{% static 'js/admin.js' %}"></script>
+</body>
+</html>
+{% endblock explain_contents %}

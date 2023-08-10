@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+{% extends "base2.html" %}
+{% load static %}
+
+{% block head_contents %}
+    <link href="{% static 'css/data_labeling.css' %}" type="text/css" rel="stylesheet">
+    <link href="{% static 'css/table.css' %}" type="text/css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0; maximum-scale=1.0; width=device-width;">
+
+<style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbit&display=swap" rel="stylesheet">
+
+    @font-face {
+        font-family: 'NanumSquareNeo-Variable';
+        src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/NanumSquareNeo-Variable.woff2') format('woff2');
+        font-weight: normal;
+        font-style: normal;
+    }
+
+    footer {
+        padding:10px 0px 0px 0px;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background-color: #86AA31;
+        color: white;
+        text-align: center;
+    }
+</style>
+{% endblock head_contents %}
+
+{% block explain_contents %}
+
+<div class="wrap">
+<div class="container">
+    <div class="left-content"  style="background-color: #FFFFFF; margin: 0px 0px 0px -100px;">
+        <table class="table-fill">
+            <thead>
+                <tr>
+                    <th colspan="2" style="text-align: center; background-color:#F2CB61;">작업 리스트</th>
+                </tr>
+            </thead>
+
+            <tbody class="table-hover">
+            <td>현재 인삼 ID <span id="current-image-id"></span></td>
+                {% for data in labeling_work %} <!-- ListView 로-->
+                {% if data.label_verification == 0 %}
+                <tr>
+                    <td class="text-center">
+                        <button type="button" name="label_img_id" onclick="displayImage('{{ data.image_id.image_id }}')">Click</button>
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mid-content" style="background-color:#F2CB61; margin-top:30px;">
+        <div id="image-container" >
+            <img id="uploaded-image" src="{% static 'images/labeling_logo.png' %}" alt="Uploaded Image">
+            <canvas id="annotation-canvas"></canvas>
+        </div>
+    </div>
+
+  <div class="right-content" style="background-color:#F2CB61;margin: 30px 0px 0px 0px;">
+
+    <div class="right-content" style="background-color:#F2CB61; margin: 15px 0px 0px 0px;">
+      <div>
+        <label for="bbox-label">BBox 라벨:</label>
+        <br>
+        <input type="radio" id="label1" name="bbox-label" value="머리" checked>
+        <label for="label1">머리</label>
+        <input type="radio" id="label2" name="bbox-label" value="몸통">
+        <label for="label2">몸통</label>
+        <input type="radio" id="label3" name="bbox-label" value="다리">
+        <label for="label3">다리</label>
+        <input type="radio" id="label5" name="bbox-label" value="전신">
+        <label for="label5">전신</label>
+        <br>
+        <label for="startX">startX:</label>
+        <input type="number" id="startX" name="startX"><br>
+        <label for="startY">startY:</label>
+        <input type="number" id="startY" name="startY"><br>
+        <label for="endX">endX:</label>
+        <input type="number" id="endX" name="endX"><br>
+        <label for="endY">endY:</label>
+        <input type="number" id="endY" name="endY">
+        <br>
+        <br>
+        <button id="add-bbox">BBox 추가</button>
+      </div>
+            <div style="padding: 3px 0;">
+                <br>
+                <button id="saveData">데이터 저장</button>
+                {% csrf_token %}
+                <br>
+            </div>
+            </div>
+            <div style="position: relative; ">
+                <div id="bbox-coordinates" style="background-color:#F2CB61;">
+            </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="{% static 'js/data_labeling.js' %}"></script>
+<script>
+  var globalTitle;
+
+  function displayImage(title) {
+    globalTitle = title; // 전역 변수에 전달
+    console.log(globalTitle);
+    var imageUrl = `https://storage.googleapis.com/insam/${title}`;
+    var uploadedImage = document.getElementById('uploaded-image');
+    uploadedImage.src = imageUrl;
+    uploadedImage.onload = function () {
+      var annotationCanvas = document.getElementById('annotation-canvas');
+      annotationCanvas.width = uploadedImage.width;
+      annotationCanvas.height = uploadedImage.height;
+    };
+    var currentImageId = document.getElementById('current-image-id');
+        currentImageId.textContent = `${title}`;
+  }
+
+  function inputData(selectedLabel) {
+    var title = globalTitle; // 전역 변수 받아오기
+    fetch(`/home/labelingpage/get_labeling_data/${title}`)
+      .then(response => response.json())
+      .then(data => {
+        var headData = JSON.parse(data[0][1]);
+        var bodyData = JSON.parse(data[0][2]);
+        var legData = JSON.parse(data[0][3]);
+        var totalData = JSON.parse(data[0][4]);
+
+        var startXInput = document.getElementById('startX');
+        var startYInput = document.getElementById('startY');
+        var endXInput = document.getElementById('endX');
+        var endYInput = document.getElementById('endY');
+
+        if (selectedLabel == '머리') {
+          startXInput.value = headData[0];
+          startYInput.value = headData[1];
+          endXInput.value = headData[2];
+          endYInput.value = headData[3];
+        } else if (selectedLabel == '몸통') {
+          startXInput.value = bodyData[0];
+          startYInput.value = bodyData[1];
+          endXInput.value = bodyData[2];
+          endYInput.value = bodyData[3];
+        } else if (selectedLabel == '다리') {
+          startXInput.value = legData[0];
+          startYInput.value = legData[1];
+          endXInput.value = legData[2];
+          endYInput.value = legData[3];
+        } else if (selectedLabel == '전신') {
+          startXInput.value = totalData[0];
+          startYInput.value = totalData[1];
+          endXInput.value = totalData[2];
+          endYInput.value = totalData[3];
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+  }
+
+  // 라디오 버튼 변경 이벤트 감지
+  document.addEventListener('DOMContentLoaded', function () {
+    var radioButtons = document.querySelectorAll('input[name="bbox-label"]');
+    radioButtons.forEach(function (radioButton) {
+      radioButton.addEventListener('change', function () {
+        var selectedLabel = document.querySelector('input[name="bbox-label"]:checked').value;
+        inputData(selectedLabel); // selectedLabel만 전달
+      });
+    });
+  });
+
+
+  // 2. 저장 버튼 눌렀을 때, 아래 함수 호출 //
+  var saveDataButton = document.getElementById('saveData');
+  saveDataButton.addEventListener('click', function() {
+    console.log('데이터 저장 버튼 클릭');
+    saveData();
+    resetBoundingBoxes();
+  });
+
+  function saveData() {
+      var data = [];
+      var jsonData = JSON.stringify(bboxes);
+      title = globalTitle;
+
+      console.log('title', title);
+      console.log('jsonData', jsonData);
+
+      // AJAX를 사용하여 데이터를 서버로 전송
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', '/home/labelingpage/save_coordinates/' + globalTitle + '/');
+
+      // xhr.open('POST', '/home/labelingpage/save_coordinates/{{ title }}/');  // save_coordinates 뷰 함수의 URL로 변경
+      // CSRF 토큰 설정
+      var csrfTokenElement = document.querySelector('input[name="csrfmiddlewaretoken"]');
+      if (csrfTokenElement) {
+        var csrfToken = csrfTokenElement.value;
+        // 여기에서 나머지 코드를 실행합니다.
+      } else {
+        console.error('CSRF 토큰 요소를 찾을 수 없습니다.');
+      }
+
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.setRequestHeader('X-CSRFToken', csrfToken);
+
+      xhr.send(jsonData);
+
+      // 응답 처리
+      xhr.onreadystatechange = function() {
+          if (xhr.readyState === XMLHttpRequest.DONE) {
+              if (xhr.status === 200) {
+                // 성공적으로 데이터가 저장되었을 때의 처리
+                alert('데이터가 성공적으로 저장되었습니다.');
+                // 해당 링크로 이동
+                window.location.href = '';
+
+              } else {
+                // 데이터 저장 실패 또는 오류 발생시의 처리
+                alert('데이터 저장에 실패하였습니다.');
+              }
+          }
+      };
+
+      console.log('saveData() 함수가 실행되었습니다.');  // 콘솔에 메시지 출력
+  }
+
+  function resetBoundingBoxes() {
+    bboxes = [];
+  }
+</script>
+
+{% endblock explain_contents %}

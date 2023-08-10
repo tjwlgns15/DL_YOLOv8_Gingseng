@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<head>
+  <meta charset="UTF-8">
+  <style>
+    .main {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+
+    .input {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+    }
+
+    .label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+    }
+
+    .select {
+      margin-bottom: 10px;
+      margin-top: 10px;
+      text-align: 30px;
+    }
+
+    .real-upload {
+      display: none;
+    }
+
+    .upload_img {
+      width: 350px;
+      height: 350px;
+      border-style: solid;
+      background-color: white;
+      margin: 0 800px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .upload_img img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .submit_button {
+      text-align: center;
+      margin: 5px auto;
+    }
+
+
+    @media (max-width: 1200px) {
+      .upload_img {
+        margin: 0 425px;
+      }
+      .submit_button {
+        width: 100px;
+      }
+
+
+    @media (max-width: 790px) {
+      .upload_img {
+        margin: 0 230px;
+      }
+
+  </style>
+</head>
+
+<body>
+
+    {% if upload_failed %}
+    <div style="color: red; text-align: center; margin-bottom: 10px;">
+      파일을 업로드하지 않았습니다. 이미지 파일을 선택해주세요.
+    </div>
+    {% endif %}
+
+    <div class="main">
+     <div>
+      <form method="post" action="submit/" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" class="real-upload" name="image_files" accept="image/*" required multiple onchange="checkImageSize(event)">
+        <div style="text-align: center" class="upload_img">
+            <img src="{% static 'image/download.jpg' %}" alt="업로드">
+        </div>
+        <script>
+          function checkImageSize(event) {
+            const files = event.currentTarget.files;
+            const maxSizeInBytes = 10 * 1024 * 1024; // 최대 파일 크기를 10MB
+
+            for (let i = 0; i < files.length; i++) {
+              const file = files[i];
+
+              if (file.size > maxSizeInBytes) {
+                alert(`파일 "${file.name}"의 크기가 제한을 초과했습니다. 최대 파일 크기는 10MB입니다.`);
+                event.currentTarget.value = '';
+                return;
+              }
+            }
+
+            const uploadPreview = document.querySelector('.upload_img img');
+            const fileReader = new FileReader();
+
+            fileReader.onload = function(event) {
+              uploadPreview.src = event.target.result;
+            };
+
+            if (files && files[0]) {
+              fileReader.readAsDataURL(files[0]);
+            }
+          }
+
+          const realUpload = document.querySelectorAll('.real-upload')[0];
+          const upload = document.querySelector('.upload_img');
+
+          upload.addEventListener('click', () => realUpload.click());
+
+          // form 제출 시 파일 업로드 여부를 확인하고, 업로드하지 않은 경우 팝업 창을 띄우는 함수
+        function checkFormSubmission() {
+            const files = document.querySelector('.real-upload').files;
+            if (files.length === 0) {
+                alert("사진을 업로드하세요.");
+            } else {
+                // 파일이 업로드되었을 경우 form 제출
+                document.querySelector('form').submit();
+            }
+        }
+       </script>
+       <div>
+          <div class="submit_button">
+            <button type="submit" class="btn btn-primary">제출하기</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+
+{% endblock content %}
+

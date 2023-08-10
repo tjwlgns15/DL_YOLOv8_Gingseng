@@ -1,0 +1,44 @@
+{% extends "admin_base.html" %}
+{% load static %}
+
+{% block head_contents %}
+   <link href="{% static 'css/adminpage.css' %}" type="text/css" rel="stylesheet">
+    <meta charset="UTF-8">
+{% endblock head_contents %}
+
+{% block explain_contents %}
+<html>
+<head>
+	<!-- head contents here -->
+</head>
+<body>
+<div class="projects mb-4">
+	<div class="projects-inner">
+		<header class="projects-header">
+			<div class="title">작업비용 조정</div>
+			<i class="zmdi zmdi-download"></i>
+		</header>
+        <form action="{% url 'adminpage:point_change_form' %}" method="POST" style="color:white">
+             {% csrf_token %}
+            <div>
+              <label>포인트 종류</label>
+              <label for="point_ID_1">
+                <input type="radio" name="point_ID" id="point_ID_1" value="1" checked> 원시데이터
+              </label>
+              <label for="point_ID_2">
+                <input type="radio" name="point_ID" id="point_ID_2" value="2"> 라벨링
+              </label>
+            </div>
+            <div>
+              <label for="name">가격</label>
+              <input type="text" name="name" id="name">
+            </div>
+            <br>
+            <input type="submit" value="제출">
+		 </form>
+	</div>
+</div>
+<script src="{% static 'js/admin.js' %}"></script>
+</body>
+</html>
+{% endblock explain_contents %}

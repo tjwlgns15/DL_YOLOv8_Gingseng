@@ -1,0 +1,147 @@
+{% extends "admin_base.html" %}
+{% load static %}
+
+{% block head_contents %}
+<link href="{% static 'css/adminpage.css' %}" type="text/css" rel="stylesheet">
+<meta charset="UTF-8">
+
+<style>
+    .answer_delete {
+        text-align: right;
+    }
+    .answer input {
+        margin: 20px auto;
+        width : 600px;
+        height : 70px;
+        border-radius:10px;
+    }
+    .answer_button {
+        text-align: right;
+        margin-button : 10px;
+    }
+</style>
+{% endblock head_contents %}
+
+{% block explain_contents %}
+<div style="display: flex; justify-content: center;">
+    <div>
+        <img src="{{ image_url }}" alt="다운로드" style="width: 600px; height: 750px; margin: 30px;">
+    </div>
+    <div>
+        <table class="table table-bordered table-striped my-table" style="background: #ffffff; margin-top: 100px;">
+            <thead>
+            <tr>
+                <th>인삼 ID</th>
+                <th>년근</th>
+                <th>등급</th>
+                <th>품종</th>
+                <th>업로더</th>
+                <th>상태</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>{{ wonsi_data.ginseng_id.ginseng_id }}</td>
+
+                <td>
+                    {% if wonsi_data.age == 'four' %}
+                    4년근
+                    {% elif wonsi_data.age == 'five' %}
+                    5년근
+                    {% elif wonsi_data.age == 'six' %}
+                    6년근
+                    {% endif %}
+                </td>
+                <td>
+                    {% if wonsi_data.grade == 'large' %}
+                    대
+                    {% elif wonsi_data.grade == 'medium' %}
+                    중
+                    {% elif wonsi_data.grade == 'small' %}
+                    소
+                    {% endif %}
+                </td>
+                <td>
+                    {% if wonsi_data.variety == 'NULL' %}
+                    고려인삼
+                    {% elif wonsi_data.variety == Yunpoong %}
+                    윤풍
+                    {% elif wonsi_data.variety == Gopoong %}
+                    고풍
+                    {% elif wonsi_data.variety == Gumpoong %}
+                    금풍
+                    {% elif wonsi_data.variety == Cheonryang %}
+                    천량
+                    {% elif wonsi_data.variety == Kowon %}
+                    고원
+                    {% elif wonsi_data.variety == Chunmyong %}
+                    천명
+                    {% elif wonsi_data.variety == Jinwon %}
+                    진원
+                    {% endif %}
+                </td>
+                <td>
+                    {{ wonsi_data.username.username }}
+                </td>
+                <td>
+                    {% if wonsi_board.state == 0 %}
+                    처리 중
+                    {% elif wonsi_board.state == 1 %}
+                    승인 완료
+                    {% elif wonsi_board.state == 2 %}
+                    반려
+                    {% endif %}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        {% if wonsi_board.state != 1 %}
+        <form class="form" action="{% url 'adminpage:update_wonsi_verification' %}" method="POST" style="margin: 30px;">
+            {% csrf_token %}
+            <input type="hidden" name="wonsi_num" value="{{ wonsi_board.wonsi_num }}">
+            <button type="submit" name="approve" class="btn btn-primary"
+                    style="width: 200px; height: 50px; font-size: 20px; margin: 20px 20px 20px 50px;">승인
+            </button>
+            <button type="submit" name="reject" class="btn btn-danger"
+                    style="width: 200px; height: 50px; font-size: 20px; margin-left: 30px;">반려
+            </button>
+        </form>
+        {% endif %}
+
+        {% if wonsi_board.state == 2 %}
+        <div class="answer_input">
+            <div class="comment-header" style="color: #FFFFFF; margin-bottom:10px;">댓글</div>
+            {% for comment in comments_data %}
+            <div class="answer_text" style="color: #FFFFFF">
+                <a1>[{{ comment.admin_id.admin_id }}]</a1>
+                <a2>{{ comment.text }}</a2>
+            </div>
+                <a3 style="color:#ffffff">{{ comment.create_date }}</a3>
+            <form method="POST">
+                <div class="answer_delete">
+                    <input type="hidden" name="comments_num" value="{{ comment.wonsi_comments_num }}">
+                    {% csrf_token %}
+                    <button type="submit" name=delete_reply class="btn btn-dark">삭제</button>
+                </div>
+            </form>
+            {% endfor %}
+        </div>
+        <form method="POST" action="{% url 'adminpage:wonsi_data_detail' wonsi_board.wonsi_num %}">
+            {% csrf_token %}
+            <div class="answer">
+                <input type="hidden" name="wonsi_num" value="{{ all_boards.wonsi_num }}">
+                <input type="text" placeholder="댓글을 입력하세요" name="text">
+            </div>
+            <div class="answer_button">
+                <button type="submit" name=create_reply class="btn btn-dark">입력</button>
+            </div>
+        </form>
+        {% endif %}
+        <div style="text-align: right; margin-top: 10px;">
+            <a href="{% url 'adminpage:wonsi_verification_index'%}" class="btn btn-dark">목록으로 돌아가기</a>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/admin.js' %}"></script>
+{% endblock explain_contents %}

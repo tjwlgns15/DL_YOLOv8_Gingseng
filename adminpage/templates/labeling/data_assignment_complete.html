@@ -1,0 +1,13 @@
+{% extends "admin_base.html" %}
+{% load static %}
+
+{% block head_contents %}
+<link href="{% static 'css/adminpage.css' %}" type="text/css" rel="stylesheet">
+<meta charset="UTF-8">
+{% endblock head_contents %}
+
+{% block explain_contents %}
+<h1>데이터 할당이 완료되었습니다!</h1>
+<p>작업자들에게 데이터가 성공적으로 할당되었습니다.</p>
+<p>이제 작업자들은 할당된 데이터를 처리할 수 있습니다.</p>
+{% endblock explain_contents %}

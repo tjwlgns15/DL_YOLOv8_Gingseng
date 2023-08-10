@@ -1,0 +1,155 @@
+{% extends "base2.html" %}
+{% load static %}
+
+{% block head_contents %}
+   <link href="{% static 'css/adminpage.css' %}" type="text/css" rel="stylesheet">
+    <meta charset="UTF-8">
+
+<style>
+.my_table {
+   text-align: center;
+   margin: 30px auto;
+   width: 1000px;
+}
+.all_text {
+    text-align:center;
+    display: flex;
+    margin : 0px 0px 0px 480px;
+}
+.all_border {
+    border: 1px solid #999;
+   border-radius: 10px;
+   border-weight: bold;
+   padding: 30px 40px 400px 30px;
+}
+.data_list {
+    margin-left: 60px;
+}
+.refuse {
+    border: 1px solid #999;
+   border-radius: 10px;
+   border-weight: bold;
+   margin-top : 30px;
+}
+.panel-heading {
+    margin-bottom: 20px;
+}
+
+.upload_img {
+   width: 500px;
+   height: 500px;
+   border-style: solid;
+   background-color: white;
+   margin: 70px 20px 90px 0px;
+}
+
+.upload_img canvas {
+   width: 100%;
+   height:100%;
+   object-fit: cover;
+}
+footer {
+        padding:10px 0px 0px 0px;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background-color: #86AA31;
+        color: white;
+        text-align: center;
+    }
+</style>
+{% endblock head_contents %}
+
+{% block explain_contents %}
+<div class = "my_table">
+    <table class="table table-bordered table-striped my-table" style="background: #ffffff;">
+        <thead>
+            <tr>
+                <th>Image ID</th>
+                <th>작업자 ID</th>
+                <th>상태</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ image_id }}</td>
+                <td>{{ work_id.username }}</td>
+                 <td>
+                   {% if state == 0 %}
+                   <p style="color: #47C83E; font-weight: bold; margin-bottom:0px;">처리 중
+                   {% elif state == 1 %}
+                   <p style="color: #0054FF; margin-bottom:0px; font-weight: bold;">승인 완료
+                   {% elif state == 2 %}
+                   <p style="color: #FF0000; margin-bottom:0px;  font-weight: bold; ">반려</p>
+                   {% endif %}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="all_text">
+    <div class="upload_img">
+        {% if image_url %}
+            <img id="image" src="{{ image_url }}" alt="Image with Bounding Box" width="600" height="750" style="display: none;">
+            <canvas id="bboxCanvas" width="600" height="750"></canvas>
+        {% else %}
+            <p>Image not found.</p>
+        {% endif %}
+    </div>
+      <div class = "data_list">
+         <div class="panel-heading">
+            <h4 class="panel-title">
+               <a style="font-weight: bold;" data-toggle="collapse" data-parent="#accordion">라벨링한 인삼정보<span style="float: right;"></span></a>
+            </h4>
+         </div>
+            <div class ="all_border">
+                <h6 style="font-weight: bold;">▶현재 이미지 아이디:{{labeling_board.title}}</h6>
+                {% for data in labeling_objects|slice:":10" %}
+                <div>
+                    <a href="{% url 'my_page:data_labeling_detail_my_page' data.work_num %}">
+                        {{ data.image_id.image_id }}
+                    </a>
+                </div>
+                {% endfor %}
+          </div>
+            {% if labeling_board.state == 2 %}
+            <div class="refuse" style="display: flex; margin-top: 10px;">
+                <p style="font-size: 15px; margin: 12px 10px 10px 10px; color: #FF0000; font-weight: bold;">반려이유:</p>
+                {% for data in labeling_comments %}
+                <div style="margin: 10px 10px 10px 0px;">
+                    <a style="font-size: 15px; font-weight: bold">{{ data.text }}</a>
+                </div>
+                {% endfor %}
+            {% endif %}
+            </div>
+    </div>
+</div>
+    <script>
+        var image = document.getElementById('image');
+        var bboxCanvas = document.getElementById('bboxCanvas');
+        var ctx = bboxCanvas.getContext('2d');
+
+        var imageObj = new Image();
+        imageObj.onload = function() {
+            ctx.drawImage(imageObj, 0, 0, 600, 750);
+
+            var colors = ['red', 'blue', 'green', 'yellow'];
+            {% for coords in bbox_coords %}
+                var bboxCoords = {{ coords }};
+                var xMin = bboxCoords[0];
+                var yMin = bboxCoords[1];
+                var xMax = bboxCoords[2];
+                var yMax = bboxCoords[3];
+
+                var colorIndex = {{ forloop.counter0 }} % colors.length;
+                ctx.strokeStyle = colors[colorIndex];
+                ctx.lineWidth = 2;
+                ctx.strokeRect(xMin, yMin, xMax - xMin, yMax - yMin);
+            {% endfor %}
+        };
+        imageObj.src = image.src;
+    </script>
+    <script src="{% static 'js/admin.js' %}"></script>
+
+{% endblock explain_contents %}

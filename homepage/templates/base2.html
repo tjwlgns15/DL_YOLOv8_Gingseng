@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+{% load i18n static %}
+<html>
+<head>
+    {% block head_contents %}
+    {% endblock head_contents %}
+    <title>인삼!!!!</title>
+    <meta charset="utf-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- 글씨체 변경 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbit&display=swap" rel="stylesheet">
+    <style>
+    @font-face {
+        font-family: 'NanumSquareNeo-Variable';
+        src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/NanumSquareNeo-Variable.woff2') format('woff2');
+        font-weight: normal;
+        font-style: normal;
+    }
+
+    .right-area {
+        background-color: #ffffff;
+        text-align : right;
+        padding-right : 50px;
+    }
+
+    html, body {
+        height: 100%;
+    }
+
+    .wrap {
+        position: relative;
+        min-height: 100%;
+        padding-bottom: 114px;
+        font-family: 'NanumSquareNeo-Variable', Arial, sans-serif;
+    }
+
+    footer {
+        padding: 10px 0px 0px 0px;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background-color: #86AA31;
+        color: white;
+        text-align: center;
+        font-family: 'NanumSquareNeo-Variable', Arial, sans-serif;
+        /* Add these new properties to make it sticky */
+        z-index: 999;
+    }
+
+    h1 {
+        color:#CEF76E;
+        margin: 5px;
+        text-align: center;
+        flex-grow: 1;
+        text-align: center;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 1);
+        -webkit-text-stroke: 1.5px #356300;
+        top-margin: 20px;
+    }
+</style>
+</head>
+
+<body>
+<div class="wrap">
+    <div style="display: flex; justify-content: center; align-items: center;">
+        <a href="/home">
+            <img style="width: 300px; height: auto;" src="/static/image/인삼조아.png">
+        </a>
+    </div>
+
+    <div class="right-area" style="display: flex; margin:-30px 0px 0px 0px;justify-content: flex-end;">
+        {% if request.user.is_authenticated %}
+
+        {% if authority == 0 or authority == 1 or authority == 2 or authority == 3 %}
+        <div class="col-6">
+            <a> {% if hello_authority == 0 %}
+                    [일반]
+                    {% elif hello_authority == 1 %}
+                    [원시데이터 업로더]
+                    {% elif hello_authority == 2 %}
+                    [데이터 라벨러]
+                    {% elif hello_authority == 3 %}
+                    [원시/데이터]
+                    {% elif hello_authority == 4 %}
+                    [매니저]
+                    {% elif hello_authority == 5 %}
+                    [관리자]
+                    {% endif %}
+            </a>
+            <a>{{ hello_user }}</a>
+            <a href="/home/my_page" style="text-decoration: none; color:#8C8C8C">마이페이지</a> /
+            <a href="/home/account/logout" style="text-decoration: none; color:#8C8C8C">로그아웃</a>
+        </div>
+        {% elif authority == 4 or authority == 5 %}
+        <div class="col-6">
+            <a> {% if hello_authority == 0 %}
+                    [일반]
+                    {% elif hello_authority == 1 %}
+                    [원시데이터 업로더]
+                    {% elif hello_authority == 2 %}
+                    [데이터 라벨러]
+                    {% elif hello_authority == 3 %}
+                    [원시/데이터]
+                    {% elif hello_authority == 4 %}
+                    [매니저]
+                    {% elif hello_authority == 5 %}
+                    [관리자]
+                    {% endif %}
+            </a>
+            <a>{{ hello_user }}</a>
+            <a href="/home/adminpage" style="text-decoration: none; color:#8C8C8C">관리자페이지</a> /
+            <a href="/home/account/logout" style="text-decoration: none; color:#8C8C8C">로그아웃</a>
+        </div>
+        {% endif %}
+        {% else %}
+        <div class="col-6">
+            <a href="/home/account/signup" style="text-decoration: none; color:#8C8C8C">회원가입</a> /
+            <a href="/home/account/login" style="text-decoration: none; color:#8C8C8C">로그인</a> /
+        </div>
+        {% endif %}
+    </div>
+
+    <nav class="navbar navbar-expand navbar-light"
+         style="background-color:#86AA31; display: block; margin:10px 50px; width:auto;height:50px;">
+        <ul class="navbar-nav" style="position:relative">
+            <li class="nav-item">
+                <a class="nav-link" href="/home" style="color:#FFFFFF;">HOME</a>
+            </li>
+
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="공지사항" data-toggle="dropdown"
+                   style="width:100px;color:#ffffff;">공지사항</a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="/home/notice">공지 사항</a>
+                    <a class="dropdown-item" href="/home/questionboard">질문 게시판</a>
+                </div>
+            </li>
+            <!--        <li class="nav-item">-->
+            <!--           <a class="nav-link" href="/home/uploadpage" style="width:150px;color:#ffffff" >원시 데이터 투입</a>-->
+            <!--        </li>-->
+            {% if authority == 1 or authority == 3 or authority == 4 or authority == 5%}
+            <li class="nav-item">
+                <a class="nav-link" href="#" onclick="document.getElementById('myForm').submit();"
+                   style="width:150px;color:#ffffff">원시데이터 등록</a>
+                <form id="myForm" action="{% url 'uploadpage:create_generate_id' %}" method="post">
+                    {% csrf_token %}
+                </form>
+            </li>
+            {% endif %}
+
+            {% if authority == 2 or authority == 3 or authority == 4 or authority == 5%}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'labelingpage:datalabeling' %}" style="width:150px;color:#ffffff;">데이터
+                    라벨링</a>
+            </li>
+            {% endif %}
+            <li class="nav-item">
+                <a class="nav-link" href="/home/yolov8" style="width:150px;color:#ffffff;">
+                    Yolov8 Beta</a>
+            </li>
+
+            <li class="nav-item" style="margin-left:auto">
+                <a></a>
+            </li>
+        </ul>
+    </nav>
+    {% block explain_contents %}
+    {% endblock explain_contents %}
+    <footer>
+        <p>
+            <span>TeamPoPo:TeamProject</span><br/>
+            <span>이메일:mirae@mirae.com</span><br/>
+            <span>대전 서구 계룡로491번길 86 미래융합교육원</span>
+        </p>
+    </footer>
+</div>
+</body>
+</html>

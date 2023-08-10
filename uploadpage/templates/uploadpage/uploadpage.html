@@ -1,0 +1,211 @@
+{% extends "base2.html" %}
+{% load static %}
+
+{% block explain_contents %}
+<head>
+  <meta charset="UTF-8">
+  <style>
+     input {
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     margin: 0 auto;
+     }
+
+     label {
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     margin: 0 auto;
+     }
+
+    select {
+    margin-bottom: 10px;
+    margin-top: 10px;
+    text-align: 30px;
+    }
+
+    .real-upload {
+      display: none;
+    }
+
+    .upload_img {
+      width: 368px;
+      height: 368px;
+      border-style: solid;
+      background-color: white;
+      float: left;
+      margin: 30px 50px;
+    }
+
+    .upload_img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    }
+
+    .main {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .submit_button {
+      text-align: center;
+      width: 100px;
+      margin: 30px 50px;
+    }
+
+    .select_box {
+    margin: 80px 10px;
+    width: 200px;
+    height: 68.5px;
+    flex-direction: column;
+    text-align:center;
+    display:flex;
+  }
+  .category_id_varieties{
+    width: 100px;
+    margin-top:30px;
+  }
+  .another_ginseng_button {
+  width: 200px;
+
+  margin-top: 0px;
+  }
+  .table-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0px;
+    margin-bottom : 50px;
+    height:100%;
+    width:100%;
+  }
+  </style>
+</head>
+<body>
+  <div class="main">
+    <div>
+      <form method="post" action="{% url 'uploadpage:write_board' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" class="real-upload" name="image_files" accept="image/*" required multiple onchange="checkImageSize(event)">
+        <div style="text-align: center" class="upload_img"><img src="{% static 'image/upload_logo.png' %}" alt="업로드"></div>
+        <script>
+          function checkImageSize(event) {
+            const files = event.currentTarget.files;
+            const maxSizeInBytes = 10 * 1024 * 1024; // 최대 파일 크기를 10MB
+
+            for (let i = 0; i < files.length; i++) {
+              const file = files[i];
+
+              if (file.size > maxSizeInBytes) {
+                alert(`파일 "${file.name}"의 크기가 제한을 초과했습니다. 최대 파일 크기는 10MB입니다.`);
+                event.currentTarget.value = '';
+                return;
+              }
+            }
+
+            const uploadPreview = document.querySelector('.upload_img img');
+            const fileReader = new FileReader();
+
+            fileReader.onload = function(event) {
+              uploadPreview.src = event.target.result;
+            };
+
+            if (files && files[0]) {
+              fileReader.readAsDataURL(files[0]);
+            }
+          }
+
+          const realUpload = document.querySelectorAll('.real-upload')[0];
+          const upload = document.querySelector('.upload_img');
+
+          upload.addEventListener('click', () => realUpload.click());
+       </script>
+
+      <div class="select_box">
+        <div>
+          <label class="category_id_varieties">인삼품종</label>
+          <select name="category_variety">
+            <option value="NULL" selected>알 수 없음</option>
+            <option value="Chunpoong">천풍</option>
+            <option value="Yunpoong">윤풍</option>
+            <option value="Gopoong">고풍</option>
+            <option value="Gumpoong">금풍</option>
+            <option value="Cheonryang">천량</option>
+            <option value="Kowon">고원</option>
+            <option value="Chunmyong">천명</option>
+            <option value="Jinwon">진원</option>
+          </select>
+        </div>
+        <div>
+          <label class="category_id_age" >인삼의 년근</label>
+          <select name="category_age">
+            <option value="four">4년근</option>
+            <option value="five" selected>5년근</option>
+            <option value="six">6년근</option>
+          </select>
+        </div>
+        <div>
+          <label class="category_id_grade" >인삼등급</label>
+          <select name="category_grade">
+            <option value="large">대</option>
+            <option value="medium">중</option>
+            <option value="small" selected>소</option>
+          </select>
+        </div>
+        <div>
+          <div class="submit_button">
+            <button type="submit" class="btn btn-primary">제출하기</button>
+          </div>
+        </div>
+         <div>
+        <div class="another_ginseng_button">
+          <button type="submit" class="btn btn-danger" onclick="increaseGinsengId()">다른인삼 제출하기</button>
+        </div>
+          <script>
+            function increaseGinsengId() {
+              var xhr = new XMLHttpRequest();
+              xhr.open('GET', '{% url 'uploadpage:increase_ginseng' %}');
+              xhr.onload = function() {
+                if (xhr.status === 200) {
+                  alert('다른 인삼으로 변경되었습니다.');
+                  // 인삼 ID 값을 업데이트하기 위해 페이지를 새로 고칩니다.
+                  location.reload();
+                } else {
+                  alert('요청을 처리할 수 없습니다.');
+                }
+              };
+              xhr.send();
+            }
+          </script>
+        </div>
+      </div>
+      <div>
+        <div class="table-container">
+          <table class="table table-bordered table-striped my-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>현재인삼 ID</th>
+                <th>업로드한 게시물 수</th>
+                <th>원시데이터 포인트</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{ request.user.username }}</td>
+                <td>{{ ginseng }}</td>
+                <td>{{ upload_count }}</td>
+                <td>{{ user_info.authority }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </form>
+  </div>
+ </div>
+</body>
+{% endblock explain_contents %}

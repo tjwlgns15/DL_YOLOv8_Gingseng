@@ -1,0 +1,57 @@
+body {
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      text-align : center;
+      margin: 0 10px;
+      display: flex;
+    }
+
+    .left-content {
+      flex-basis: 20%;
+      padding: 30px;
+      background-color: #f6e1f4;
+      text-align: center;
+    }
+
+
+    .mid-content {
+      flex-basis: 50%;
+      padding: 30px;
+      background-color: #FFFFCC;
+      text-align: center;
+    }
+
+    .right-content {
+      flex-basis: 30%;
+      padding: 15px;
+      background-color: #CCFFCC;
+      text-align: center;
+    }
+
+    #image-container {
+      position: relative;
+      display: inline-block;
+    }
+    #annotation-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    #uploaded-image {
+      width: 750px;
+      height: 600px;
+    }
+
+    #bbox-coordinates {
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      background-color: rgba(255, 255, 255, 0.8);
+      padding: 0px;
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+    }

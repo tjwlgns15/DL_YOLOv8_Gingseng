@@ -1,0 +1,310 @@
+{% extends "admin_base.html" %}
+{% load static %}
+
+{% block head_contents %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <link href="{% static 'css/adminpage.css' %}" type="text/css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+            /* 2x2 분할을 위한 스타일 */
+
+    .content-container {
+        margin-top: 0px;
+    }
+    .container {
+        margin-top : 0px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .item {
+        border: 1px solid #ccc;
+        padding: 10px;
+    }
+
+    /* 두 번째 행은 분할 없이 1개만 */
+    .item:nth-child(3) {
+        grid-column: span 2; /* 해당 아이템을 2개 열로 확장 */
+    }
+    </style>
+{% endblock head_contents %}
+
+{% block explain_contents %}
+<div class="container">
+    <div class="item" style="color:#ffffff;">
+        <div style="width: 100%; background-color: #1b2431; padding: 20px;">
+            <canvas id="donutChart" width="100" height="30"></canvas>
+        </div>
+        <div id="chart-legend" style="margin-top: 20px;"></div>
+    </div>
+
+    <div class="item" style="color:#ffffff;">
+        <script style="width: 100%; background-color: #1b2431; padding: 20px;" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <div style=" margin: 20px;">
+            <canvas id="ageChart" width="100" height="30"></canvas>
+        </div>
+    </div>
+</div>
+<div class="container2" style="color:#ffffff;  margin: 20px auto; width: 1110px; height:400px;">
+     <div class="item" style="width: 100%; background-color: #1b2431;">
+        <canvas id="myChart" width="100" height="30"></canvas>
+    </div>
+</div>
+
+<script src="{% static 'js/admin.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // Django에서 전달받은 JSON 데이터 파싱
+    const ageData = JSON.parse('{{ age_ratios_json|escapejs|safe }}');
+
+    // 원 그래프 생성
+    const ctx = document.getElementById('ageChart').getContext('2d');
+    const ageChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['4년근', '5년근', '6년근'], // 년근 레이블을 변경하여 설정
+            datasets: [{
+                data: [ageData['four'], ageData['five'], ageData['six']], // 년근별 데이터 사용
+                backgroundColor: ['rgba(34,241,224,0.5)', 'rgba(146,255,26,0.5)', 'rgba(255,142,125,0.5)'],
+                borderWidth: 1,
+            }]
+        },
+        options: {
+            title: {
+                display: true,
+                text: '인삼 년근별 분포 비율'
+            }
+        }
+    });
+
+    // 원 그래프 클릭 이벤트 리스너 추가
+    document.getElementById('ageChart').addEventListener('click', function(event) {
+        const activePoints = ageChart.getElementsAtEvent(event);
+        if (activePoints && activePoints.length > 0) {
+            const ageClicked = ageChart.data.labels[activePoints[0]._index];
+
+            // 서버로 선택한 나이에 해당하는 grade 데이터 요청
+            fetch(`/get_grade_data/?age=${ageClicked}`)
+                .then(response => response.json())
+                .then(data => {
+                    const gradeLabels = Object.keys(data);
+                    const gradeCounts = Object.values(data);
+                    updateGradeChart(gradeLabels, gradeCounts);
+                })
+                .catch(error => {
+                    console.error('Error fetching grade data:', error);
+                });
+        }
+    });
+
+    // 초기 grade 데이터로 그래프 그리기
+    const initialGradeData = JSON.parse('{{ grade_counts|escapejs|safe }}');
+    const initialGradeLabels = Object.keys(initialGradeData);
+    const initialGradeCounts = Object.values(initialGradeData);
+    updateGradeChart(initialGradeLabels, initialGradeCounts);
+
+    // 막대 그래프 생성 함수
+    function updateGradeChart(labels, counts) {
+        const gradeCtx = document.getElementById('gradeChart').getContext('2d');
+        if (window.gradeChart) {
+            // 기존 막대 그래프가 존재하면 제거
+            window.gradeChart.destroy();
+        }
+        window.gradeChart = new Chart(gradeCtx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '인삼 년근별 개수',
+                    data: counts,
+                    backgroundColor: 'skyblue',
+                }]
+            },
+            options: {
+                legend: {
+                    display: false
+                },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                        }
+                    }]
+                }
+            }
+        });
+    }
+  });
+
+  document.addEventListener("DOMContentLoaded", function() {
+    var ctx = document.getElementById('donutChart').getContext('2d');
+    var user_data_json = {{ user_data_json|safe }};
+
+    // 데이터 가공을 위한 배열 초기화
+    var chartData = [];
+    var chartLabels = [];
+
+    // user_data를 가공하여 chartData와 chartLabels에 데이터 추가
+    for (var i = 0; i < user_data_json.length; i++) {
+        chartData.push(user_data_json[i].total);
+
+        // authority 값을 매핑하여 적절한 라벨을 설정
+        var authority = user_data_json[i].authority;
+        var label = "";
+        switch (authority) {
+            case 0:
+                label = "일반";
+                break;
+            case 1:
+                label = "업로더";
+                break;
+            case 2:
+                label = "라벨러";
+                break;
+            case 3:
+                label = "업로더/라벨러";
+                break;
+            case 4:
+                label = "매니저";
+                break;
+            case 5:
+                label = "관리자";
+                break;
+            default:
+                label = "Unknown";
+                break;
+        }
+        chartLabels.push(label);
+    }
+
+    var donutChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: chartLabels,
+            datasets: [{
+                data: chartData,
+                backgroundColor: ['rgba(34, 152, 241, 0.5)', 'rgba(102, 185, 46, 0.5)', 'rgba(214, 91, 74, 0.5)', 'rgba(115, 83, 194, 0.5)','rgba(255, 235, 182, 0.5)'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            cutoutPercentage: 70,
+            tooltips: {
+                callbacks: {
+                    label: function(tooltipItem, data) {
+                        var dataset = data.datasets[tooltipItem.datasetIndex];
+                        var total = dataset.data.reduce(function(previousValue, currentValue, currentIndex, array) {
+                            return previousValue + currentValue;
+                        });
+                        var currentValue = dataset.data[tooltipItem.index];
+                        var percentage = ((currentValue / total) * 100).toFixed(1);
+
+                        var label = data.labels[tooltipItem.index] || '';
+                        if (label) {
+                            label += ': ';
+                        }
+                        label += currentValue + ' 명 (' + percentage + '%)';
+                        return label;
+                    }
+                }
+            },
+            legend: {
+                display: true,
+                labels: {
+                    generateLabels: function(chart) {
+                        var data = chart.data;
+                        if (data.labels.length && data.datasets.length) {
+                            return data.labels.map(function(label, i) {
+                                var dataset = data.datasets[0];
+                                var meta = dataset._meta[Object.keys(dataset._meta)[0]];
+                                var total = meta.total;
+                                var currentValue = dataset.data[i];
+                                var percentage = parseFloat((currentValue / total * 100).toFixed(1));
+                                return {
+                                    text: label + ': ' + currentValue + ' 명',
+                                    fillStyle: dataset.backgroundColor[i],
+                                    hidden: isNaN(dataset.data[i]) || meta.data[i].hidden,
+                                    index: i
+                                };
+                            });
+                        }
+                        return [];
+                    }
+                }
+            }
+        }
+    });
+});
+
+    // 오늘부터 -6일까지의 날짜를 계산합니다.
+    var labels = [];
+    for (var i = 6; i >= 0; i--) {
+      var date = moment().subtract(i, 'days').format('YY-MM-DD'); // 날짜
+      var dayOfWeek = moment().subtract(i, 'days').format('dddd'); // 요일
+      labels.push(date + ' (' + dayOfWeek + ')');
+    }
+    console.log(labels)
+
+
+    // 데이터를 JSON 형태로 변환한 후 파싱하여 JavaScript 객체로 사용합니다.
+      var wonsi_data_str = '{{ wonsi_data|safe }}';
+      var labeling_data_str = '{{ labeling_data|safe }}';
+
+      var wonsi_data = JSON.parse(wonsi_data_str.replace(/'/g, '"'));
+      var labeling_data = JSON.parse(labeling_data_str.replace(/'/g, '"'));
+
+      console.log(wonsi_data);
+      console.log(labeling_data);
+
+
+
+    // 날짜별 데이터를 담을 배열을 초기화합니다.
+    var wonsi_count = Array(labels.length).fill(0);
+    var labeling_count = Array(labels.length).fill(0);
+
+    // 받아온 데이터를 날짜별로 매핑합니다.
+    for (var i = 0; i < wonsi_data.length; i++) {
+      wonsi_count[i] = wonsi_data[i].count;
+    }
+
+    for (var i = 0; i < labeling_data.length; i++) {
+        labeling_count[i] = labeling_data[i].count;
+    }
+
+
+    console.log(wonsi_count)
+    console.log(labeling_count)
+    // 그래프 데이터를 정의합니다.
+    var data = {
+      labels: labels, // 레이블
+      datasets: [{
+        label: '업로드 이미지', // 데이터셋의 이름
+        data: wonsi_count, // 실제 데이터
+        backgroundColor: 'rgba(75, 192, 192, 0.5)', // 막대 채우기 색상
+        borderColor: 'rgba(75, 192, 192, 1)', // 막대 테두리 색상
+        borderWidth: 1 // 막대 테두리 두께
+      },
+      {
+        type: 'line', // 꺾은선 그래프
+        label: '라벨링 데이터',
+        data: labeling_count,
+        backgroundColor: 'rgba(50, 100, 150, 0.5)',
+        borderColor: 'rgba(50, 100, 150, 1)',
+        borderWidth: 5
+      }]
+    };
+
+    // 그래프 생성
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+      type: 'bar', // 차트 유형 (막대 그래프)
+      data: data
+    });
+
+</script>
+
+
+{% endblock explain_contents %}

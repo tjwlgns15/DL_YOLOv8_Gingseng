@@ -1,0 +1,346 @@
+{% extends "base2.html" %}
+{% load static %}
+
+{% block head_contents %}
+<link href="{% static 'css/home2.css' %}" type="text/css" rel="stylesheet">
+<meta charset="UTF-8">
+{% endblock head_contents %}
+
+{% block explain_contents %}
+
+<style>
+  .card {
+    box-shadow: 0 0 2rem 0 rgba(136,152,170,.15);
+  }
+
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 0 solid rgba(0,0,0,.125);
+    border-radius: 1rem;
+  }
+
+  .card-header {
+    background-color: #FFED86;
+  }
+
+  .col-12 {
+    margin: 0px 5px 0px 0px;
+    max-width: 15%;
+  }
+
+  .card-body {
+    min-height: 1px;
+  }
+
+  .carousel-control-next, .carousel-control-prev {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 15%;
+    padding: 0;
+    color: #fff;
+    text-align: center;
+    background: 0 0;
+    border: 0;
+    opacity: .5;
+    transition: opacity .15s ease;
+  }
+
+
+  .board {
+    position: relative;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-align : center;
+    background-clip: border-box;
+    border: 1px solid rgba(0,0,0,.125);
+    border-radius: 0.25rem;
+    width: 40%;
+  }
+
+    .board_box {
+        display: flex;
+        justify-content: center;
+        text-align: center;
+        top-margin: 30px;
+    }
+
+  .carousel-inner img {
+    height: 400px;
+    object-fit: width;
+    margin: 20px auto;
+  }
+  .carousel-inner .carousel-item {
+    transition: none;
+  }
+
+  .carousel {
+    margin: 0 auto;
+    width: 1200px;
+  }
+
+  .detail_menu {
+    display: flex;
+    justify-content: center;
+  }
+    .pagination {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+    }
+    .pagination a, .pagination span {
+        margin-right: 10px; /* 원하는 간격으로 조정 */
+    }
+    .container {
+        width: 600px;
+    }
+
+    table {
+        border-spacing: 1;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 6px;
+        overflow: hidden;
+        width: 600px;
+        margin: 10px 10px 10px 10px;
+        position: relative;
+    }
+    table * {
+        position: relative;
+    }
+    table td, table th {
+        padding-left: 8px;
+        text-align: center; /* 가운데 정렬 추가 */
+    }
+    table thead tr {
+        height: 50px;
+        background: #F2CB61;
+        font-size: 16px;
+    }
+    table tbody tr {
+        height: 48px;
+        border-bottom: 1px solid #E3F1D5;
+    }
+    table tbody tr:last-child {
+        border: 0;
+    }
+
+    @media screen and (max-width: 35.5em) {
+        table {
+            display: block;
+        }
+        table > *,
+        table tr,
+        table td,
+        table tbody tr {
+            height: auto;
+            padding: 8px 0;
+        }
+        table tbody tr td {
+            padding-left: 45px;
+            margin-bottom: 12px;
+        }
+        table tbody tr td:last-child {
+            margin-bottom: 0;
+        }
+        table tbody tr td:before {
+            position: absolute;
+            font-weight: 700;
+            width: 600px;
+            left: 10px;
+            top: 0;
+        }
+        .con table {
+            width: 600px;
+            margin: 20px 10px 10px 10px;
+        }
+        .con {
+            margin: 20px 10px 10px 10px;
+        }
+
+
+</style>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+</head>
+<body>
+<!--    <div class="products">
+      <a href="#">
+        <img src=../static/image/ginseng-gf26b5665f_640.jpg>
+      </a>
+      <a href="#">
+        <img src="../static/image/wild-ginseng-4259589_640.jpg">
+      </a>
+      <a href="#">
+        <img src="../static/image/party-ginseng-5422163_1280.jpg">
+      </a>
+      <div class="clearfix"></div>
+    </div> -->
+<div class="py-4 container-fluid">
+    <div class="menu">
+        <div class="col-lg-12">
+            <div class="detail_menu">
+                <div class="col-lg-3 col-md-6 col-12">
+                    <div class="mb-4 card">
+                        <div class="p-3 card-body">
+                            <div class="d-flex flex-row-reverse justify-content-between">
+                                <div>
+                                    <div class="text-center icon icon-shape bg-gradient-danger border-radius-2xl">
+                                        <i class="text-lg opacity-10 ni ni-world" aria-hidden="true"></i>
+                                    </div>
+                                </div>
+                                <div class="">
+                                    <div class="numbers">
+                                        <p class="mb-0 text-sm text-uppercase font-weight-bold">회원 수</p>
+                                        <h5 class="font-weight-bolder">{{total_users_count}}명</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 col-12">
+                    <div class="mb-4 card">
+                        <div class="p-3 card-body">
+                            <div class="d-flex flex-row-reverse justify-content-between">
+                                <div>
+                                    <div class="text-center icon icon-shape bg-gradient-warning border-radius-2xl">
+                                        <i class="text-lg opacity-10 ni ni-cart" aria-hidden="true"></i>
+                                    </div>
+                                </div>
+                                <div class="numbers">
+                                    <p class="mb-0 text-sm text-uppercase font-weight-bold">업로드 된 인삼 개수</p>
+                                    <h5 class="font-weight-bolder">{{total_gingseng_count}}개</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    <div class="col-lg-3 col-md-6 col-12">
+                        <div class="mb-4 card">
+                            <div class="p-3 card-body">
+                                <div class="d-flex flex-row-reverse justify-content-between">
+                                    <div>
+                                        <div class="text-center icon icon-shape bg-gradient-warning border-radius-2xl">
+                                            <i class="text-lg opacity-10 ni ni-cart" aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+                                    <div class="numbers">
+                                        <p class="mb-0 text-sm text-uppercase font-weight-bold">라벨링 된 인삼 개수</p>
+                                        <h5 class="font-weight-bolder">{{total_labeling_count}}개</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="my">
+                <div id="myCarousel" class="carousel slide" data-ride="carousel">
+                    <div class="carousel">
+                        <ul class="carousel-indicators">
+                            <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                            <li data-target="#myCarousel" data-slide-to="1"></li>
+                            <li data-target="#myCarousel" data-slide-to="2"></li>
+                        </ul>
+
+                        <!-- The slideshow -->
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                              <a href="/home_model/">
+                                <img src="../static/image/모델검증.jpg" width="1200" height="300">
+                              </a>
+                            </div>
+                            <div class="carousel-item">
+                               <a href="/home/notice/1/">
+                                <img src="../static/image/업로드요령.jpg" width="1200" height="300">
+                               </a>
+                            </div>
+                            <div class="carousel-item">
+                              <a href="/home/notice/2/">
+                                <img src="../static/image/라벨링요령.jpg" width="1200" height="300">
+                              </a>
+                            </div>
+                        </div>
+
+                        <!-- Left and right controls -->
+                        <a class="carousel-control-prev" href="#myCarousel" data-slide="prev">
+                            <span class="carousel-control-prev-icon"></span>
+                        </a>
+                        <a class="carousel-control-next" href="#myCarousel" data-slide="next">
+                            <span class="carousel-control-next-icon"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!--게시판 목록 띄우는 부분 -->
+            <div class="board_box">
+                <div class="con">
+                    <table>
+                        <h5 style="text-align:left; margin: 25px 0px 0px 10px; font-weight:600;">[공지사항]</h5>
+                        <thead>
+                        <tr>
+                            <th>제목</th>
+                            <th>작성자</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for article in page_object|slice:":3" %}
+                        <tr>
+                            <td><a style="color:#000000" href="{% url 'notice:detail' article.Notice_num %}">{{ article.title }}</a></td>
+                            <td>{{ article.admin_id.admin_id }}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <br>
+                </div>
+                <div class="con">
+                    <table>
+                        <h5 style="text-align:left;margin: 25px 0px 0px 10px;font-weight:600;">[질문게시판]</h5>
+                        <thead>
+                        <tr>
+                            <th>제목</th>
+                            <th>작성자</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for article in page_obj|slice:":3" %}
+                        <tr>
+                            <td><a style="color:#000000" href="{% url 'questionboard:detail' article.question_num %}">{{ article.title }}</a></td>
+                            <td>{{ article.username.username }}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+{% endblock explain_contents %}

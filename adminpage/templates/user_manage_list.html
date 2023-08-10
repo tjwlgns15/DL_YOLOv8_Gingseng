@@ -1,0 +1,74 @@
+{% extends "admin_base.html" %}
+{% load static %}
+
+{% block head_contents %}
+<link href="{% static 'css/adminpage.css' %}" type="text/css" rel="stylesheet">
+<meta charset="UTF-8">
+{% endblock head_contents %}
+
+{% block explain_contents %}
+<div class="projects mb-4">
+    <div class="projects-inner">
+        <header class="projects-header">
+            <div class="title">유저 관리</div>
+            <i class="zmdi zmdi-download"></i>
+        </header>
+        <table class="projects-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>이름</th>
+                <th>E-mail</th>
+                <th>전화번호</th>
+                <th>권한</th>
+                <th>권한 설정</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for user in object_list %}
+            {% if user.authority != 5 %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>{{ user.name }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.phone }}</td>
+                <td>
+                    {% if user.authority == 0 %}
+                    일반
+                    {% elif user.authority == 1 %}
+                    원시데이터 업로더
+                    {% elif user.authority == 2 %}
+                    데이터 라벨러
+                    {% elif user.authority == 3 %}
+                    원시/데이터
+                    {% elif user.authority == 4 %}
+                    매니저
+                    {% elif user.authority == 5 %}
+                    관리자
+                    {% endif %}
+                </td>
+                <td>
+                    <form class="form" action="{% url 'adminpage:update_user_authority' %}" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="username" value="{{ user.username }}">
+                        <select class="action-box" name="authority">
+                            <option value="0">일반</option>
+                            <option value="1">원시데이터 업로더</option>
+                            <option value="2">데이터 라벨러</option>
+                            <option value="3">원시/데이터</option>
+                            <option value="4">매니저</option>
+                        </select>
+                        <button type="submit">설정</button>
+                    </form>
+                </td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="{% static 'js/admin.js' %}"></script>
+{% endblock explain_contents %}
+

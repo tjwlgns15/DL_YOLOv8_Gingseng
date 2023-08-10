@@ -1,0 +1,159 @@
+{% extends "base2.html" %}
+{% load static %}
+
+{% block explain_contents %}
+<style>
+    h3 {
+        margin: 30px;
+    }
+    .pagination {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+    }
+    .pagination a, .pagination span {
+        margin-right: 10px; /* 원하는 간격으로 조정 */
+    }
+
+
+    table {
+        border-spacing: 1;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 6px;
+        overflow: hidden;
+        width: 100%;
+        margin: 0 auto;
+        position: relative;
+    }
+    table * {
+        position: relative;
+    }
+    table td, table th {
+        padding-left: 8px;
+        text-align: center; /* 가운데 정렬 추가 */
+    }
+    table thead tr {
+        height: 60px;
+        background: #F2CB61;
+        font-size: 16px;
+    }
+    table tbody tr {
+        height: 48px;
+        border-bottom: 1px solid #E3F1D5;
+    }
+    table tbody tr:last-child {
+        border: 0;
+    }
+
+    @media screen and (max-width: 35.5em) {
+        table {
+            display: block;
+        }
+        table > *,
+        table tr,
+        table td,
+        table th {
+            display: block;
+        }
+        table thead {
+            display: none;
+        }
+        table tbody tr {
+            height: auto;
+            padding: 8px 0;
+        }
+        table tbody tr td {
+            padding-left: 45%;
+            margin-bottom: 12px;
+        }
+        table tbody tr td:last-child {
+            margin-bottom: 0;
+        }
+        table tbody tr td:before {
+            position: absolute;
+            font-weight: 700;
+            width: 40%;
+            left: 10px;
+            top: 0;
+        }
+        table tbody tr td:nth-child(1):before {
+            content: "CODE";
+        }
+        table tbody tr td:nth-child(2):before {
+            content: "STOCK";
+        }
+        table tbody tr td:nth-child(3):before {
+            content: "CAP";
+        }
+        table tbody tr td:nth-child(4):before {
+            content: "INCH";
+        }
+        table tbody tr td:nth-child(5):before {
+            content: "BOX TYPE";
+        }
+    }
+
+
+
+
+</style>
+<div class="container">
+    <h3>공지 사항</h3><br>
+    <table>
+        <thead>
+        <tr>
+            <th>No</th>
+            <th>제목</th>
+            <th>작성자</th>
+            <th>작성일</th>
+            <th>조회수</th>
+            {% if user.is_superuser %}
+            <th>수정</th>
+            <th>삭제</th>
+            {% endif %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for article in page_obj %}
+        <tr>
+            <td>{{article.Notice_num}}</a></td>
+            <td><a style="color:#000000" href="{% url 'notice:detail' article.Notice_num %}">{{ article.title }}</td>
+            <td>{{ article.admin_id.admin_id }}</td>
+            <td>{{ article.creat_date }}</td>
+            <td>{{ article.count}}</td>
+
+            {% if user.is_superuser %}
+            <td><a href="{% url 'notice:edit' article.Notice_num %}">수정</a></td>
+            <td><a href="{% url 'notice:delete' article.Notice_num %}">삭제</a></td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <br>
+</div>
+<br>
+
+<div class="pagination">
+    {% if page_obj.has_previous %}
+    <a href="?page=1">&laquo; 처음</a>
+    <a href="?page={{ page_obj.previous_page_number }}">이전</a>
+    {% endif %}
+
+    {% for num in page_obj.paginator.page_range %}
+    {% if num == page_obj.number %}
+    <span class="current-page">{{ num }}</span>
+    {% else %}
+    <a href="?page={{ num }}">{{ num }}</a>
+    {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}">다음</a>
+    <a href="?page={{ page_obj.paginator.num_pages }}">끝 &raquo;</a>
+    {% endif %}
+</div>
+
+
+{% endblock explain_contents %}

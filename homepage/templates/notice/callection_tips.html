@@ -1,0 +1,44 @@
+{% extends "base2.html" %}
+{% load static %}
+
+{% block explain_contents %}
+<div class="container">
+    <table class="table table-striped">
+        <h3>수집 요령</h3><br>
+        <thead>
+        <tr>
+            <th>No</th>
+            <th>제목</th>
+            <th>작성자</th>
+            <th>작성일</th>
+            <th>조회수</th>
+            {% if user.is_superuser %}
+                <th>수정</th>
+                <th>삭제</th>
+            {% endif %}
+        </tr>
+        </thead>
+        <tbody>
+            {% for certification in object_list %}
+                <tr>
+                    <td><a href="{% url 'job_posting:detail' certification.id %}">{{ certification.id }}</a></td>
+                    <td>{{ certification.company_name }}</td>
+                    <td>{{ certification.contents }}</td>
+                    <td>{{ certification.exam_date }}</td>
+                    <td>D-{{ certification.d_day }}</td>
+                    {% if user.is_superuser %}
+                        <td><a href="{% url 'job_posting:job_posting_edit' certification.id %}">수정</a></td>
+                        <td><a href="{% url 'job_posting:job_posting_delete' certification.id %}">삭제</a></td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% if user.is_authenticated %}
+        <div align="right">
+            <button type="button" class="btn btn-dark"><a href="#" style="color: white; text-decoration: none;">모집공고작성</a></button>
+        </div>
+    {% endif %}
+</div>
+<br>
+{% endblock explain_contents %}

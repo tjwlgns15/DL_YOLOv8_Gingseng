@@ -1,0 +1,137 @@
+{% extends "admin_base.html" %}
+{% load static %}
+
+{% block head_contents %}
+<link href="{% static 'css/adminpage.css' %}" type="text/css" rel="stylesheet">
+<meta charset="UTF-8">
+
+<style>
+    .answer_delete {
+        text-align: right;
+    }
+    .answer input {
+        margin: 20px auto;
+        width : 600px;
+        height : 70px;
+        border-radius:10px;
+    }
+    .answer_button {
+        text-align: right;
+        margin-button : 10px;
+    }
+</style>
+{% endblock head_contents %}
+
+{% block explain_contents %}
+<div style="display: flex; justify-content: center;">
+    <div style="margin: 30px;">
+        {% if image_url %}
+        <img id="image" src="{{ image_url }}" alt="Image with Bounding Box" width="750" height="600"
+             style="display: none;">
+        <canvas id="bboxCanvas" width="750" height="600"></canvas>
+        {% else %}
+        <p>Image not found.</p>
+        {% endif %}
+    </div>
+    <div>
+        <table class="table table-bordered table-striped my-table" style="background: #ffffff; margin-top: 100px;">
+            <thead>
+            <tr>
+                <th>Image ID</th>
+                <th>작업자 ID</th>
+                <th>상태</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>{{ image_id }}</td>
+                <td>{{ work_id.username }}</td>
+                <td>
+                    {% if state == 0 %}
+                    처리 중
+                    {% elif state == 1 %}
+                    승인 완료
+                    {% elif state == 2 %}
+                    반려
+                    {% endif %}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        {% if labeling_board.state != 1 %}
+        <form class="form" action="{% url 'adminpage:update_data_labeling_verification' %}" method="POST"
+              style="margin: 30px;">
+            {% csrf_token %}
+            <input type="hidden" name="title" value="{{ labeling_board.title }}">
+            <button type="submit" name="approve" class="btn btn-primary"
+                    style="width: 200px; height: 50px; font-size: 20px; margin: 0px 0px 0px 70px;">승인
+            </button>
+            <button type="submit" name="reject" class="btn btn-danger"
+                    style="width: 200px; height: 50px; font-size: 20px; margin-left: 30px;">반려
+            </button>
+        </form>
+        {% endif %}
+        <div class="answer_input">
+            <div class="comment-header" style="color: #FFFFFF; margin-bottom:10px;">댓글</div>
+            {% for comment in comments_data %}
+            <div class="answer_text" style="color: #FFFFFF;" >
+                <a1>[{{ comment.admin_id.admin_id }}]</a1>
+                <a2>{{ comment.text }}</a2>
+            </div>
+                <a3 style="color: #FFFFFF;">{{ comment.create_date }}</a3>
+            <form action="{% url 'adminpage:update_data_labeling_verification' %}" method="POST">
+                <div class="answer_delete">
+                    <input type="hidden" name="board_num" value="{{ labeling_board.board_num }}">
+                    <input type="hidden" name="comments_num" value="{{ comment.labeling_comments_num }}">
+                    {% csrf_token %}
+                    <button type="submit" name=delete_reply class="btn btn-dark">삭제</button>
+                </div>
+            </form>
+            {% endfor %}
+        </div>
+        {% if labeling_board.state == 2 %}
+        <form method="POST" action="{% url 'adminpage:update_data_labeling_verification'%}">
+            {% csrf_token %}
+            <div class="answer">
+                <input type="hidden" name="board_num" value="{{ labeling_board.board_num }}">
+                <input type="text" placeholder="댓글을 입력하세요" name="text">
+            </div>
+            <div class="answer_button">
+                <button type="submit" name=create_reply class="btn btn-dark">입력</button>
+            </div>
+        </form>
+        {% endif %}
+        <div style ="text-align: right; margin-top: 10px;">
+            <a href="{% url 'adminpage:data_labeling_verification_index'%}" class="btn btn-dark">목록으로 돌아가기</a>
+        </div>
+    </div>
+</div>
+<script>
+    var image = document.getElementById('image');
+    var bboxCanvas = document.getElementById('bboxCanvas');
+    var ctx = bboxCanvas.getContext('2d');
+
+    var imageObj = new Image();
+    imageObj.onload = function() {
+        ctx.drawImage(imageObj, 0, 0, 750, 600);
+
+        var colors = ['red', 'blue', 'green', 'yellow'];
+        {% for coords in bbox_coords %}
+            var bboxCoords = {{ coords }};
+            var xMin = bboxCoords[0];
+            var yMin = bboxCoords[1];
+            var xMax = bboxCoords[2];
+            var yMax = bboxCoords[3];
+
+            var colorIndex = {{ forloop.counter0 }} % colors.length;
+            ctx.strokeStyle = colors[colorIndex];
+            ctx.lineWidth = 2;
+            ctx.strokeRect(xMin, yMin, xMax - xMin, yMax - yMin);
+        {% endfor %}
+    };
+    imageObj.src = image.src;
+
+</script>
+
+<script src="{% static 'js/admin.js' %}"></script>
+{% endblock explain_contents %}

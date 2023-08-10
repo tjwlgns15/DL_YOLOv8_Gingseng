@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+{% load i18n static %}
+<html>
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbit&display=swap" rel="stylesheet">
+    <style>
+    @font-face {
+        font-family: 'NanumSquareNeo-Variable';
+        src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/NanumSquareNeo-Variable.woff2') format('woff2');
+        font-weight: normal;
+        font-style: normal;
+    }
+    *{
+        font-family: 'NanumSquareNeo-Variable', Arial, sans-serif;
+    }
+    .sidebar {
+      position: fixed; /* 사이드바를 고정 위치에 배치 */
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 250px; /* 사이드바의 너비 조정 */
+      padding: 20px;
+      background-color: #38557D;
+      box-shadow: none;
+    }
+    .sidebar .nav-link {
+      border-left: 5px solid transparent;
+      color: #738297;
+      padding: 0.5rem 0.75rem;
+    }
+    .sidebar .nav-link:hover {
+      color: white;
+    }
+    .sidebar .nav-link.active {
+      border-left: 5px solid #738297;
+      color: white;
+    }
+    .sidebar .zmdi {
+      display: inline-block;
+      font-size: 1.35rem;
+      margin-right: 5px;
+      min-width: 25px;
+    }
+
+    .content-container {
+        margin-left: 250px;
+        padding: 20px;
+    }
+    .content-container1 {
+        margin-left: 5px;
+        padding: 20px;
+    }
+
+
+
+    </style>
+    {% block head_contents %}
+    {% endblock head_contents %}
+    <title>관리자!!!!</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- 글씨체 변경 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbit&display=swap" rel="stylesheet">
+</head>
+<body style="background-color: #1b2431 ">
+<nav class="sidebar">
+    <div class="sidebar-sticky">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link active" href="/home/adminpage">
+                    <i class="zmdi zmdi-widgets"></i>
+                    관리자 홈 <span class="sr-only">(current)</span>
+                </a>
+            </li>
+        </ul>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link active" href="#">
+                    <i class="zmdi zmdi-widgets"></i>
+                    유저 관리 <span class="sr-only">(current)</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'adminpage:user_index' %}">
+                    <i class="zmdi zmdi-shopping-cart"></i>
+                    유저 권한설정
+                </a>
+            </li>
+        </ul>
+ <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link active" href="#">
+                    <i class="zmdi zmdi-widgets"></i>
+                    포인트 관리 <span class="sr-only">(current)</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'adminpage:point_d_list' %}">
+                    <i class="zmdi zmdi-shopping-cart"></i>
+                    가계부
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'adminpage:Point_settlement_list' %}">
+                    <i class="zmdi zmdi-shopping-cart"></i>
+                    포인트 정산
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'adminpage:point_change' %}">
+                    <i class="zmdi zmdi-shopping-cart"></i>
+                    작업비용 조정
+                </a>
+            </li>
+        </ul>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link active" href="#">
+                    <i class="zmdi zmdi-widgets"></i>
+                    게시글 관리 <span class="sr-only">(current)</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'adminpage:questionboard_index' %}">
+                    <i class="zmdi zmdi-shopping-cart"></i>
+                    질문 답변하기
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'adminpage:notice_index' %}">
+                    <i class="zmdi zmdi-shopping-cart"></i>
+                    공지사항
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'adminpage:wonsi_verification_index' %}">
+                    <i class="zmdi zmdi-shopping-cart"></i>
+                    데이터 검증
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'adminpage:data_labeling_verification_index' %}">
+                    <i class="zmdi zmdi-shopping-cart"></i>
+                    라벨링 검증
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'adminpage:assignment_view' %}">
+                    <i class="zmdi zmdi-shopping-cart"></i>
+                    라벨링 작업량 배분
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="/home">
+                    <i class="zmdi zmdi-widgets"></i>
+                    메인 홈 <span class="sr-only">(current)</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 my-3">
+    <div class="card-list" style="text-align: center;">
+        <div class="row">
+
+            <div class="col-12 col-md-6 col-lg-4 col-xl-3 mb-4">
+                <div class="card blue" style="margin: 15px;">
+                    <div class="title" style="font-size: 15px; font-weight: bold;">검증된 원시 데이터</div>
+                    <i class="zmdi zmdi-upload"></i>
+                    <div class="value">{{total_veri_sum}}개</div>
+                    <div class="stat"><b></b></div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4 col-xl-3 mb-4">
+                <div class="card green" style="margin: 15px;">
+                    <div class="title" style="font-size: 15px; font-weight: bold;">검증된 라벨링 데이터</div>
+                    <i class="zmdi zmdi-upload"></i>
+                    <div class="value">{{total_label_sum}}개</div>
+                    <div class="stat"><b></b></div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4 col-xl-3 mb-4">
+                <div class="card orange" style="margin: 15px;">
+                    <div class="title" style="font-size: 15px; font-weight: bold;">결제 대기중인 포인트</div>
+                    <i class="zmdi zmdi-download"></i>
+                    {% if waiting_sum == None %}
+                    <div class="value"> 0원 </div>
+                    {% else %}
+                    <div class="value">{{ waiting_sum }}원</div>
+                    {% endif %}
+                    <div class="stat"><b></b></div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4 col-xl-3 mb-4">
+                <div class="card red" style="margin: 15px;">
+                    <div class="title" style="font-size: 15px; font-weight: bold;">정산된 포인트</div>
+                    <i class="zmdi zmdi-download"></i>
+                    {% if settlement_sum == None %}
+                    <div class="value"> 0원 </div>
+                    {% else %}
+                    <div class="value">{{ settlement_sum }}원</div>
+                    {% endif %}
+                    <div class="stat"><b></b></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</main>
+
+<div class="content-container">
+    {% block explain_contents %}
+    {% endblock explain_contents %}
+</div>
+
+</body>
+</html>

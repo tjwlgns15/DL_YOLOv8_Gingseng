@@ -1,0 +1,61 @@
+{% extends "admin_base.html" %}
+{% block head_contents %}
+{% load static %}
+<link href="{% static 'css/adminpage.css' %}" type="text/css" rel="stylesheet">
+<meta charset="UTF-8">
+{% endblock head_contents %}
+
+{% block explain_contents %}
+<div class="projects mb-4">
+    <div class="projects-inner">
+        <header class="projects-header">
+            <div class="title">질문게시판</div>
+            <i class="zmdi zmdi-download"></i>
+        </header>
+        <table class="projects-table">
+            <thead>
+            <tr>
+                <th>No</th>
+                <th>제목</th>
+                <th>작성자</th>
+                <th>작성일</th>
+                <th>조회수</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for article in page_obj %}
+            <tr>
+                <td><a href="{% url 'adminpage:questionboard_detail' article.question_num %}">{{ article.question_num }}</a></td>
+                <td>{{ article.title }}</td>
+                <td>{{ article.username.username }}</td>
+                <td>{{ article.create_date }}</td>
+                <td>{{ article.count }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <br>
+    </div>
+</div>
+
+
+<div class="pagination">
+    {% if page_obj.has_previous %}
+    <a href="?page=1">&laquo; 처음</a>
+    <a href="?page={{ page_obj.previous_page_number }}">이전</a>
+    {% endif %}
+
+    {% for num in page_obj.paginator.page_range %}
+    {% if num == page_obj.number %}
+    <span class="current-page">{{ num }}</span>
+    {% else %}
+    <a href="?page={{ num }}">{{ num }}</a>
+    {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}">다음</a>
+    <a href="?page={{ page_obj.paginator.num_pages }}">끝 &raquo;</a>
+    {% endif %}
+</div>
+{% endblock explain_contents %}
